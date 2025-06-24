@@ -20,8 +20,8 @@ class TicketModel
      */
     public function create(array $data): int
     {
-        $query = "INSERT INTO ticket (sujet, `desc`, priorite, file) 
-                  VALUES (:sujet, :desc, :priorite, :file)";
+        $query = "INSERT INTO ticket (sujet, `desc`, priorite, file, id_statut) 
+                  VALUES (:sujet, :desc, :priorite, :file, 1)"; 
 
         $stmt = $this->db->prepare($query);
 

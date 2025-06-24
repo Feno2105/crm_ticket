@@ -37,7 +37,7 @@ class TicketController
         $sujet = $_POST['sujet'] ?? '';
         $description = $_POST['desc'] ?? '';
         $priorite = $_POST['priorite'] ?? '';
-        $fichier = $_FILES['file'] ?? null;
+        $fichier = $_FILES['file'] ?? '';
 
         // Validation des champs obligatoires (fichier non inclus)
         if (empty($sujet) || empty($description) || empty($priorite)) {
@@ -50,10 +50,10 @@ class TicketController
         }
 
         try {
-            $nomFichier = null;
+            $nomFichier = '';
 
             // Traitement du fichier seulement si un fichier a été uploadé
-            if ($fichier && $fichier['error'] === UPLOAD_ERR_OK) {
+            if ($fichier != '' && $fichier['error'] === UPLOAD_ERR_OK) {
                 // Vérification du type de fichier
                 $extensionsAutorisees = ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'];
                 $extension = strtolower(pathinfo($fichier['name'], PATHINFO_EXTENSION));
@@ -89,8 +89,8 @@ class TicketController
                 'priorite' => $priorite,
                 'file' => $nomFichier, // Peut être null
                 'date_creation' => date('Y-m-d H:i:s'),
-                'statut' => 'ouvert'
             ]);
+
 
             $_SESSION['flash_message'] = [
                 'type' => 'success',
