@@ -20,8 +20,8 @@ class TicketModel
      */
     public function create(array $data): int
     {
-        $query = "INSERT INTO ticket (sujet, `desc`, priorite, file, id_statut) 
-                  VALUES (:sujet, :desc, :priorite, :file, 1)"; 
+        $query = "INSERT INTO ticket (sujet, `desc`, priorite, file) 
+                  VALUES (:sujet, :desc, :priorite, :file)";
 
         $stmt = $this->db->prepare($query);
 
@@ -41,25 +41,17 @@ class TicketModel
      * @param array $data Données à mettre à jour
      * @return bool True si la mise à jour a réussi
      */
-    public function update(int $id, array $data): bool
+    public function update(array $data)
     {
         $query = "UPDATE ticket SET 
-                  sujet = :sujet,
-                  `desc` = :desc,
-                  priorite = :priorite,
-                  file = :file
-                  WHERE id = :id";
+                 sujet = :sujet, 
+                 `desc` = :desc, 
+                 priorite = :priorite, 
+                 file = :file 
+                 WHERE id = :id";
 
         $stmt = $this->db->prepare($query);
-
-        // Liaison des paramètres avec bindParam
-        $stmt->bindParam(':id', $id);
-        $stmt->bindParam(':sujet', $data['sujet']);
-        $stmt->bindParam(':desc', $data['desc'] ?? null);
-        $stmt->bindParam(':priorite', $data['priorite']);
-        $stmt->bindParam(':file', $data['file'] ?? null);
-
-        return $stmt->execute();
+        return $stmt->execute($data);
     }
 
     /**
@@ -67,12 +59,13 @@ class TicketModel
      * @param int $id ID du ticket à supprimer
      * @return bool True si la suppression a réussi
      */
-    public function remove(int $id): bool
+    public function remove($id)
     {
-        $query = "DELETE FROM ticket WHERE id = :id";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':id', $id);
-        return $stmt->execute();
+        $sql = "DELETE FROM ticket WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+
+        $stmt->execute([':id' => $id]);
+        echo "Suppression réussie !";
     }
 
     /**

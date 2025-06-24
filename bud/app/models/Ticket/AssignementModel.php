@@ -1,9 +1,11 @@
 <?php
-namespace App\Models\Ticket;
+namespace app\models\Ticket;
 
+use PDO;
 use Flight;
 
-class AssignementModel {
+class AssignementModel 
+{
     private $db;
 
     public function __construct() {
@@ -76,5 +78,12 @@ class AssignementModel {
         $stmt = $this->db->prepare($query);
         $stmt->bind_param('i', $id);
         return $stmt->execute();
+    }
+    public function getAllAgents()
+    {
+        $query = "SELECT id, nom, prenom FROM employer";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
