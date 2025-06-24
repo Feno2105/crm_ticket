@@ -11,6 +11,7 @@ use app\controllers\BudgetController;
 use app\controllers\EmployerController;
 use app\controllers\NatureFormController;
 use app\controllers\TypeFormController;
+use app\controllers\ticket\TicketController;
 use flight\net\Router;
 use flight\Engine;
 
@@ -57,6 +58,13 @@ $router->group('/finance', function () use ($router) {
     $EmployerController = new EmployerController();
     $router->get('/', [$EmployerController, 'loginFinance']);
 });
+
+$router->group('/ticket', function () use ($router) {
+    $ticket_controller = new TicketController();
+    $router->get('/', [$ticket_controller, 'entry']);
+    $router->post('/create', [$ticket_controller, 'add']);
+});
+
 $router->group('/dashboard', function () use ($router) {
     $product_controller = new ProductController();
     $router->get('/', [$product_controller, 'getDahsboard']);

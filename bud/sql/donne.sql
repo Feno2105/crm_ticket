@@ -168,3 +168,8 @@ INSERT INTO Ventes (id_produit, quantite, Valeur, mois, annee) VALUES (4, 1, 245
 INSERT INTO Ventes (id_produit, quantite, Valeur, mois, annee) VALUES (5, 1, 7600.00, 3, 2024);
 INSERT INTO Ventes (id_produit, quantite, Valeur, mois, annee) VALUES (5, 2, 15200.00, 6, 2024);
 INSERT INTO Ventes (id_produit, quantite, Valeur, mois, annee) VALUES (5, 1, 7600.00, 10, 2024);
+
+INSERT INTO priorite (id, nom)VALUES 
+    (1, 'Ouvert'),
+    (2, 'En Cours'),
+    (3, 'Terminer');
