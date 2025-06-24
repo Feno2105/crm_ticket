@@ -12,6 +12,7 @@ use app\controllers\EmployerController;
 use app\controllers\NatureFormController;
 use app\controllers\TypeFormController;
 use app\controllers\ticket\TicketController;
+use app\controllers\ticket\CommentaireController;
 use flight\net\Router;
 use flight\Engine;
 
@@ -58,7 +59,7 @@ $router->group('/finance', function () use ($router) {
     $EmployerController = new EmployerController();
     $router->get('/', [$EmployerController, 'loginFinance']);
 });
-
+//=================ticket=======================
 $router->group('/ticket', function () use ($router) {
     $ticket_controller = new TicketController();
     $router->get('/', [$ticket_controller, 'entry']);
@@ -66,6 +67,13 @@ $router->group('/ticket', function () use ($router) {
     $router->get('/delete', [$ticket_controller, 'delete']);
     $router->post('/update', [$ticket_controller, 'modified']);
     $router->post('/assigner', [$ticket_controller, 'createAssignement']);
+});
+
+//==================commentaire=================
+$router->group('/commentaire', function () use ($router) {
+    $commentaire_controller = new CommentaireController();
+    $client_controller = new ClientController();
+    $router->get('/', [$client_controller, 'liste']);
 });
 
 $router->group('/dashboard', function () use ($router) {

@@ -384,6 +384,13 @@ if (session_status() === PHP_SESSION_NONE) {
                     <span>Vente</span>
                 </a>
             </li><!-- End Profile Page Nav -->
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="/commentaire">
+                    <i class="bi bi-chat"></i>
+                    <span>avis-client</span>
+                </a>
+            </li><!-- End Profile Page Nav -->
         </ul>
 
     </aside><!-- End Sidebar-->
