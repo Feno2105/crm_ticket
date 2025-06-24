@@ -2,9 +2,9 @@
 
 namespace app\controllers;
 
+use app\models\BudgetModel;
 use app\models\TypeModel;
 use app\models\NatureModel;
-use app\models\BudgetModel;
 use Flight;
 use app\models\SRMmodels\VenteModel;
 
@@ -17,49 +17,23 @@ class BudgetController
         $natureModel = new NatureModel(Flight::db());
         $natures = $natureModel->findAll();
         $TypeModel = new TypeModel(Flight::db());
-        $types = $TypeModel->findAll();
         $liste_previsions = [];
         $liste_realisations = [];
-        $liste_categories = [];
-        $data = ['page' => "insertBudget",'liste_previsions' => $liste_previsions ,'liste_realisations' => $liste_realisations ,'liste_categories'=>$liste_categories
-         ,'natures' => $natures, 'types' => $types];
+        $liste_types = $TypeModel->findAll();
+        $data = ['page' => "insertBudget",'liste_previsions' => $liste_previsions ,'liste_realisations' => $liste_realisations ,'liste_types'=>$liste_types
+         ,'natures' => $natures];
         Flight::render('template2', $data);
     }
-    public function validation()
+    public function createPrevision()
     {
-        $BudgetModel = new BudgetModel(Flight::db());
-        $types = $BudgetModel->getAll();
-        $data = ['page' => "insertBudget", 'types' => $types];
-        Flight::render('template2', $data);
-    }
-    public function validate()
-    {
-        $BudgetModel = new BudgetModel(Flight::db());
-        $data = array();
-        $data[0] = $_GET['id'];
-        $BudgetModel->valider($data);
-        $budget = $BudgetModel->getAll();
-        session_start();
-        $rand = rand(1, 15);
-        $data2[0]  = $_SESSION['idP'];
-        $data2[1] = $rand;
-        $data2[2] = $_SESSION['prix'] * $rand;
-        $data2[4] = $_SESSION['annee'];
-        $idT = 0;
-        $bud = $BudgetModel->getById($data);
-        $idT = $bud['idT'];
+        $previsionModel = new BudgetModel();
+        $data = Flight::request()->data->getData();
 
-        if ($idT == 5) {
-            $VenteModel = new VenteModel(Flight::db());
-            for ($i = $_SESSION['mois']; $i < 12; $i++) {
-                $data2[3] = $i;
-                $VenteModel->insert($data2);
-            }
-            $data = ['page' => "budget", 'budgets' => $budget];
-            Flight::render('template', $data);
+        $id = $previsionModel->createPrev($data,$id_dept = 1); // Assuming id_dept is 1 for this example
+        if ($id) {
+            Flight::redirect('/inserer');
         } else {
-            $data = ['page' => "budget", 'budgets' => $budget];
-            Flight::render('template', $data);
+            Flight::render('error', ['message' => 'Erreur lors de la création de la prévision']);
         }
     }
 }
