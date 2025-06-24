@@ -151,7 +151,12 @@ $type_reaction_list = ['positive', 'negative', 'neutre'];
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div><!-- End Vertically centered Modal-->
-
+                                                                                        <td>
+                                                                                            <button type="button" class="btn btn-outline-success"
+                                                                                                data-bs-toggle="modal"
+                                                                                                data-bs-target="#verticalycentered<?= $i ?>"><i
+                                                                                                    class="bi bi-brush"></i></button>
+                                                                                        </td>
                                                                                     </tr>
                                                         <?php } ?>
 

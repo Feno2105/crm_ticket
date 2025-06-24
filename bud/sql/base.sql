@@ -106,3 +106,37 @@ CREATE TABLE Ventes(
     annee INT
 );
 
+CREATE TABLE tickets
+(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  sujet VARCHAR(200),
+  desc VARCHAR(500),
+  priorite INT(1),
+  file VARCHAR(500)
+);
+
+CREATE TABLE statut
+(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  statut VARCHAR(100)
+);
+
+CREATE TABLE priorite
+(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  priorite VARCHAR(100)
+);
+
+CREATE TABLE statuts-tickets
+(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  id_ticket INT,
+  id_statut INT
+);
+
+CREATE TABLE Assignement
+(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  id_agent INT,
+  id_ticket INT
+);
