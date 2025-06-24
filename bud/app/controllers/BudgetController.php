@@ -28,8 +28,8 @@ class BudgetController
     {
         $previsionModel = new BudgetModel();
         $data = Flight::request()->data->getData();
-
-        $id = $previsionModel->createPrev($data,$id_dept = 1); // Assuming id_dept is 1 for this example
+        $id_dept = "1"; // Assuming id_dept is 1 for this example, you might want to change this based on your logic
+        $id = $previsionModel->createPrev($data,$id_dept); // Assuming id_dept is 1 for this example
         if ($id) {
             Flight::redirect('/inserer');
         } else {

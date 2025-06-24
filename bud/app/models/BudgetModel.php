@@ -1,7 +1,7 @@
 <?php
 namespace app\models;
 use Flight;
-
+use PDO;
 class BudgetModel {
     private $db;
 
@@ -12,28 +12,21 @@ class BudgetModel {
     /**
      * Crée une nouvelle prévision
      */
-  public function createPrev(array $data, $id_dept): int {
+ public function createPrev(array $data, int $id_dept): int {
     $query = "INSERT INTO prevision (id_dept, valeur, id_type, mois, annee, propos) 
-             VALUES (?, ?, ?, ?, ?, ?)";
+             VALUES (:id_dept, :valeur, :type, :mois, :annee, :propos)";
     $stmt = $this->db->prepare($query);
     
-    // Casting des types
-    $id_dept = (int)$id_dept;
-    $valeur = (int)$data['valeur'];
-    $type = (int)$data['type'];
-    $mois = (int)$data['mois'];
-    $annee = (int)$data['annee'];
+    $stmt->bindValue(':id_dept', $id_dept, PDO::PARAM_INT);
+    $stmt->bindValue(':valeur', (int)$data['valeur'], PDO::PARAM_INT);
+    $stmt->bindValue(':type', (int)$data['type'], PDO::PARAM_INT);
+    $stmt->bindValue(':mois', (int)$data['mois'], PDO::PARAM_INT);
+    $stmt->bindValue(':annee', (int)$data['annee'], PDO::PARAM_INT);
+    $stmt->bindValue(':propos', (string)$data['propos'], PDO::PARAM_STR);
     
-    $stmt->bindValue(1, $id_dept);
-    $stmt->bindValue(2, $valeur);
-    $stmt->bindValue(3, $type);
-    $stmt->bindValue(4, $mois);
-    $stmt->bindValue(5, $annee);
-    $stmt->bindValue(6, $data['propos']); // Pas de conversion pour 'propos'
-    
-    return $stmt->execute();
+    $stmt->execute();
+    return (int)$this->db->lastInsertId();
 }
-
     /**
      * Met à jour une prévision existante
      */
