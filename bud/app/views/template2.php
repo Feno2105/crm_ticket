@@ -304,7 +304,7 @@ if (session_status() === PHP_SESSION_NONE) {
             <li class="nav-item">
                 <a class="nav-link " href="/inserer">
                     <i class="bi bi-grid"></i>
-                    <span>Insert a budget</span>
+                    <span>Budget</span>
                 </a>
             </li>
 

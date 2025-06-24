@@ -18,7 +18,11 @@ class BudgetController
         $natures = $natureModel->findAll();
         $TypeModel = new TypeModel(Flight::db());
         $types = $TypeModel->findAll();
-        $data = ['page' => "insertBudget", 'natures' => $natures, 'types' => $types];
+        $liste_previsions = [];
+        $liste_realisations = [];
+        $liste_categories = [];
+        $data = ['page' => "insertBudget",'liste_previsions' => $liste_previsions ,'liste_realisations' => $liste_realisations ,'liste_categories'=>$liste_categories
+         ,'natures' => $natures, 'types' => $types];
         Flight::render('template2', $data);
     }
     public function validation()
