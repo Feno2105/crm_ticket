@@ -64,6 +64,9 @@ $router->group('/ticket', function () use ($router) {
     $ticket_controller = new TicketController();
     $router->get('/', [$ticket_controller, 'entry']);
     $router->post('/create', [$ticket_controller, 'add']);
+    $router->get('/delete', [$ticket_controller, 'delete']);
+    $router->post('/update', [$ticket_controller, 'modified']);
+    $router->post('/assigner', [$ticket_controller, 'createAssignement']);
 });
 
 //==================commentaire=================

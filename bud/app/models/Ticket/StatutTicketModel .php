@@ -1,9 +1,11 @@
 <?php
-namespace App\Models\Ticket;
+namespace app\models\Ticket;
 
+use PDO;
 use Flight;
 
-class StatutTicketModel {
+class StatutTicketModel 
+{
     private $db;
 
     public function __construct($db = null) {
@@ -80,5 +82,13 @@ class StatutTicketModel {
         
         $result = $stmt->get_result();
         return $result->fetch_assoc() ?: null;
+    }
+    
+    public function getAll()
+    {
+        $query = "SELECT * FROM statut";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
