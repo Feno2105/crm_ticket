@@ -17,12 +17,9 @@ class ActionReactionModel
     {
         $sql = "SELECT * FROM action_reaction";
         try {
-
             $pstmt = $this->db->prepare($sql);
             $pstmt->execute();
-
             $result_select = $pstmt->fetchAll();
-
             return $result_select;
         } catch (\Throwable $th) {
             echo "error: " . $th->getMessage();
