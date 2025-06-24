@@ -12,7 +12,6 @@ use app\controllers\EmployerController;
 use app\controllers\NatureFormController;
 use app\controllers\TypeFormController;
 use app\controllers\ticket\TicketController;
-use app\controllers\ticket\CommentaireController;
 use flight\net\Router;
 use flight\Engine;
 
@@ -23,10 +22,9 @@ use flight\Engine;
  * @var Engine $app
  */
 $EmployerController = new EmployerController();
-$BudgetController = new BudgetController();
+
 $router->get('/', [$EmployerController, 'login']);
-$router->get('/inserer', callback: [$BudgetController, 'entry']);
-$router->post('/insertionBudget', [$BudgetController, 'validation']);
+
 
 $router->post('/validation', [$EmployerController, 'validation']);
 
@@ -39,6 +37,10 @@ $router->get('/natureList', [$nature_form_controller, 'listePage']);
 $router->post('/saveNature', [$nature_form_controller, 'save']);
 $router->post('/updateNature', [$nature_form_controller, 'update']);
 $router->get('/deleteNature', [$nature_form_controller, 'delete']);
+//=============================Budget ROUTE =====================
+$BudgetController = new BudgetController();
+$router->get('/inserer', callback: [$BudgetController, 'entry']);
+$router->post('/budget/create-prevision', callback: [$BudgetController, 'createPrevision']);
 
 // ========================== TYPE ROUTE =====================
 $type_form_controller = new TypeFormController();
@@ -59,7 +61,7 @@ $router->group('/finance', function () use ($router) {
     $EmployerController = new EmployerController();
     $router->get('/', [$EmployerController, 'loginFinance']);
 });
-//=================ticket=======================
+
 $router->group('/ticket', function () use ($router) {
     $ticket_controller = new TicketController();
     $router->get('/', [$ticket_controller, 'entry']);
@@ -67,13 +69,6 @@ $router->group('/ticket', function () use ($router) {
     $router->get('/delete', [$ticket_controller, 'delete']);
     $router->post('/update', [$ticket_controller, 'modified']);
     $router->post('/assigner', [$ticket_controller, 'createAssignement']);
-});
-
-//==================commentaire=================
-$router->group('/commentaire', function () use ($router) {
-    $commentaire_controller = new CommentaireController();
-    $client_controller = new ClientController();
-    $router->get('/', [$client_controller, 'liste']);
 });
 
 $router->group('/dashboard', function () use ($router) {
