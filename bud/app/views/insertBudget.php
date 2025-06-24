@@ -51,7 +51,6 @@
                                                             <th>Libellé</th>
                                                             <th>Montant</th>
                                                             <th>Catégorie</th>
-                                                            <th>Date</th>
                                                             <th>Actions</th>
                                                         </tr>
                                                     </thead>
@@ -121,27 +120,31 @@
                         <div class="tab-pane fade profile-edit pt-3" id="budget-add-prevision">
                             <form action="/budget/create-prevision" method="post">
                                 <div class="mb-3">
-                                    <label for="libelle" class="form-label">Libellé</label>
-                                    <input type="text" class="form-control" id="libelle" name="libelle" required>
+                                    <label for="propos" class="form-label">Propos</label>
+                                    <input type="text" class="form-control" id="propos" name="propos" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="montant" class="form-label">Montant</label>
-                                    <input type="number" step="0.01" class="form-control" id="montant" name="montant" required>
+                                    <input type="number" step="0.01" class="form-control" id="montant" name="valeur" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="categorie" class="form-label">Catégorie</label>
-                                    <select class="form-select" id="categorie" name="categorie" required>
-                                        <?php /* Boucle foreach pour les catégories */ ?>
-                                        <?php foreach ($liste_categories as $categorie): ?>
-                                            <option value="<?= $categorie['id'] ?>"><?= htmlspecialchars($categorie['nom']) ?></option>
+                                    <label for="type" class="form-label">Type</label>
+                                    <select class="form-select" id="type" name="type" required>
+                                        <?php /* Boucle foreach pour les types */ ?>
+                                        <?php foreach ($liste_types as $type): ?>
+                                            <option value="<?= $type['id'] ?>"><?= htmlspecialchars($type['nom']) ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="date" class="form-label">Date</label>
-                                    <input type="date" class="form-control" id="date" name="date" required>
+                                    <label for="mois" class="form-label">Mois</label>
+                                    <input type="number" class="form-control" id="mois" name="mois" required>
                                 </div>
-                                <button type="submit" class="btn btn-outline-primary">Enregistrer la prévision</button>
+                                <div class="mb-3">
+                                    <label for="annee" class="form-label">Année</label>
+                                    <input type="number" class="form-control" id="annee" name="annee" required>
+                                </div>
+                                <button type="submit" class="btn btn-outline-primary">Implémenter la prévision</button>
                             </form>
                         </div>
 
@@ -149,36 +152,29 @@
                         <div class="tab-pane fade profile-edit pt-3" id="budget-add-realisation">
                             <form action="/budget/create-realisation" method="post">
                                 <div class="mb-3">
-                                    <label for="libelle" class="form-label">Libellé</label>
-                                    <input type="text" class="form-control" id="libelle" name="libelle" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="montant" class="form-label">Montant</label>
-                                    <input type="number" step="0.01" class="form-control" id="montant" name="montant" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="categorie" class="form-label">Catégorie</label>
-                                    <select class="form-select" id="categorie" name="categorie" required>
-                                        <?php /* Boucle foreach pour les catégories */ ?>
-                                        <?php foreach ($liste_categories as $categorie): ?>
-                                            <option value="<?= $categorie['id'] ?>"><?= htmlspecialchars($categorie['nom']) ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="date" class="form-label">Date</label>
-                                    <input type="date" class="form-control" id="date" name="date" required>
-                                </div>
-                                <div class="mb-3">
                                     <label for="prevision_id" class="form-label">Associer à une prévision</label>
                                     <select class="form-select" id="prevision_id" name="prevision_id">
                                         <option value="">Non associé</option>
                                         <?php /* Boucle foreach pour les prévisions */ ?>
                                         <?php foreach ($liste_previsions as $prevision): ?>
-                                            <option value="<?= $prevision['id'] ?>"><?= htmlspecialchars($prevision['libelle']) ?> (<?= number_format($prevision['montant'], 2, ',', ' ') ?> €)</option>
+                                            <option value="<?= $prevision['id'] ?>"><?= htmlspecialchars($prevision['propos']) ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
+                                <div class="mb-3">
+                                    <label for="montant" class="form-label">Montant</label>
+                                    <input type="number" step="0.01" class="form-control" id="montant" name="valeur" required>
+                                </div>
+                    
+                                <div class="mb-3">
+                                    <label for="mois" class="form-label">Mois</label>
+                                    <input type="number" class="form-control" id="mois" name="mois" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="annee" class="form-label">Année</label>
+                                    <input type="number" class="form-control" id="annee" name="annee" required>
+                                </div>
+                               
                                 <button type="submit" class="btn btn-outline-primary">Enregistrer la réalisation</button>
                             </form>
                         </div>
