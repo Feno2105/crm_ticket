@@ -250,13 +250,19 @@ private function handleFileUpload($newFile, $currentFile = null)
 }
     public function createAssignement()
     {
-        $ticketId = $_POST['ticket_id'] ?? null;
-        $agentId = $_POST['agent_id'] ?? null;
+        $ticketId = (string)$_POST['ticket_id'] ?? null;
+        $agentId = (string)$_POST['agent_id'] ?? null;
 
         if ($ticketId && $agentId) {
             try {
-                $model = new \App\Models\Ticket\AssignementModel();
+                $model = new AssignementModel();
+                if ($model->isTicketAlreadyAssigned($ticketId)) {
+                    $_SESSION['flash_message'] = ['type' => 'success', 'text' => 'Le ticket est déjà assigné à un agent.'];
+                    $assignment = $model->getAssignmentByTicket($ticketId);
+                }
+                else{
                 $model->create((int)$ticketId, (int)$agentId);
+                }
                 $_SESSION['flash_message'] = ['type' => 'success', 'text' => 'Agent assigné avec succès.'];
             } catch (\Exception $e) {
                 $_SESSION['flash_message'] = ['type' => 'danger', 'text' => $e->getMessage()];
