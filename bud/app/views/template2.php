@@ -4,6 +4,18 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 
+// Activer le reporting d'erreurs (à mettre ABSOLUMENT en première ligne)
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
+// Démarrer la session si nécessaire
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

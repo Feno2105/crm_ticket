@@ -12,29 +12,21 @@ class CommentaireController
     public function __construct() {}
 
     public function entry()
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        $message = [];
-        if (isset($_SESSION['flash_message'])) {
-            $message = $_SESSION['flash_message'];
-            unset($_SESSION['flash_message']);
-        }
-        $commentaireModel = new CommentaireModel(Flight::db());
-        $commentaire = $_POST['commentaire'] ?? '';
-        $ticket = $_POST['id_ticket'] ?? '';
-       
-
-        if (!isset($_POST['id_commentaire'])) {
-            
-            $this->add($commentaire,$ticket);
-        } else {
-            $id_com = $_POST['id_commentaire'] ?? '';
-            $this->update($commentaire,$ticket);
-        }
-        
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
     }
+    
+    $commentaire = $_POST['commentaire'] ?? '';
+    $ticket = $_POST['id_ticket'] ?? ''; // ou id_ticket selon votre formulaire
+    
+    if (!isset($_POST['id'])) {
+        $this->add($commentaire, $ticket);
+    } else {
+        $id_com = $_POST['id'];
+        $this->update();
+    }
+}
 
     public function add()
     {
@@ -46,14 +38,14 @@ class CommentaireController
 
         // Récupération des données du formulaire
         $sujet = $_POST['commentaire'] ?? '';
-        $ticket = $_POST['id_ticket_produit'] ?? '';
+        $ticket = (int)$_POST['id_ticket'] ?? '';
         
 
         // Validation des champs obligatoires (fichier non inclus)
-        if (empty($sujet) || empty($ticket) ) {
+        if (empty($sujet) ) {
             $_SESSION['flash_message'] = [
                 'type' => 'error',
-                'text' => 'Veuillez compléter tous les champs obligatoires (sujet, description, priorité)'
+                'text' => 'Veuillez compléter tous les champs obligatoires (sujet, description)'
             ];
             header('Location: /commentaire');
             exit();
@@ -62,8 +54,7 @@ class CommentaireController
 
         Flight::redirect('/commentaire');
         return;
-        Flight::redirect('/commentaire'); // Redirection même en cas d'erreur
-        return;
+       
     }
 
 
@@ -75,24 +66,17 @@ class CommentaireController
 
     try {
         $ticketModel = new CommentaireModel(Flight::db());
-        if (isset($_POST['id_commentaire'])) {
-            $id = $_POST['id_commentaire'];
-            $data = [
-                'commentaire' => $_POST['commentaire'],
-            ];
-    
-            // Validation minimale
-            if (empty($data['commentaire'])) {
-                throw new Exception('Le sujet est obligatoire');
-            }
-    
-            // Mise à jour
-            $success = $ticketModel->update($id, $data);
+        if (isset($_POST['id'])) {
+            $id = (int)$_POST['id'];
+           
+            $commentaire = (string)$_POST['commentaire'];
+            $ticketModel = new CommentaireModel();
+            $success = $ticketModel->update($commentaire, $id);
     
             if ($success) {
                 $_SESSION['flash_message'] = [
                     'type' => 'success',
-                    'text' => 'Ticket mis à jour avec succès'
+                    'text' => 'Ticket mis à jour avec succès'   
                 ];
             } else {
                 throw new Exception('Échec de la mise à jour');

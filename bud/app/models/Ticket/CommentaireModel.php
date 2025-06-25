@@ -12,7 +12,7 @@ class CommentaireModel {
 
     public function create($com,$id_Ticket): int
     {
-        $query = "INSERT INTO commentaire_Ticket (commentaire , id_Ticket) 
+        $query = "INSERT INTO commentaire_Ticket (commentaire , id_ticket_produit) 
                   VALUES (:com, :id)";
 
         $stmt = $this->db->prepare($query);
@@ -21,18 +21,20 @@ class CommentaireModel {
         $stmt->bindValue(':com', $com);
         $stmt->bindValue(':id', $id_Ticket);
 
-        $stmt->execute();
+        $stmt->execute();   
         return (int)$this->db->lastInsertId();
     }   
 
-    public function update(array $data)
+    public function update($com, $id_Ticket )
     {
         $query = "UPDATE commentaire_Ticket SET 
                  commentaire = :com, 
-                 WHERE id_commentaire = :id";
+                 WHERE id_commentaire = :id ";
 
         $stmt = $this->db->prepare($query);
-        return $stmt->execute($data);
+        $stmt->bindValue(':com', $com);
+        $stmt->bindValue(':id ' , $id_Ticket);
+        return $stmt->execute();
     }
 
      /**

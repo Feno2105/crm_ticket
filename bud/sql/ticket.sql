@@ -31,7 +31,7 @@ CREATE TABLE ticket_Produits(
 );
 
 CREATE TABLE commentaire_Ticket(
-    id_commentaire INT ,
+    id_commentaire INT PRIMARY KEY AUTO_INCREMENT,
     commentaire varchar(50),
     id_ticket_produit INT,
     FOREIGN KEY (id_ticket_produit) REFERENCES ticket_Produits(id)
