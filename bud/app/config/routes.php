@@ -13,6 +13,7 @@ use app\controllers\NatureFormController;
 use app\controllers\TypeFormController;
 use app\controllers\ticket\TicketController;
 use app\controllers\ticket\NoteController;
+use app\controllers\ticket\CommentaireController;
 use flight\net\Router;
 use flight\Engine;
 
@@ -80,8 +81,11 @@ $router->group('/commentaire', function () use ($router) {
     $client_controller = new ClientController();
     $produit_controller = new ProductController();
     $router->get('/', [$client_controller, 'liste']);
+    $router->post('/', [$client_controller, 'liste']);
     $router->get('/avis', [$produit_controller, 'liste_ticket']);
+    $router->post('/avis', [$produit_controller, 'liste_ticket']);
     $router->get('/evaluation', [$commentaire_controller, 'entry']);
+    $router->post('/evaluation', [$commentaire_controller, 'entry']);
 });
 
 $router->group('/dashboard', function () use ($router) {

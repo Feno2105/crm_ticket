@@ -204,6 +204,7 @@ class ProductController
         $clients = (new ClientModel(Flight::db()))->findAll();
     
         $product_categories = new CategorieProduitModel(Flight::db());
+        
     
         $data = [
             'page' => "ticket/commentaire",

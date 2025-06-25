@@ -24,11 +24,13 @@ class CommentaireController
         $commentaireModel = new CommentaireModel(Flight::db());
         $commentaire = $_POST['commentaire'] ?? '';
         $ticket = $_POST['id_ticket'] ?? '';
-        $id_com = $_POST['id_commentaire'] ?? '';
+       
 
-        if ($commentaireModel->tableExistsAndNotEmpty()) {
+        if (!isset($_POST['id_commentaire'])) {
+            
             $this->add($commentaire,$ticket);
         } else {
+            $id_com = $_POST['id_commentaire'] ?? '';
             $this->update($commentaire,$ticket);
         }
         
@@ -44,7 +46,7 @@ class CommentaireController
 
         // Récupération des données du formulaire
         $sujet = $_POST['commentaire'] ?? '';
-        $ticket = $_POST['id_tiket'] ?? '';
+        $ticket = $_POST['id_ticket_produit'] ?? '';
         
 
         // Validation des champs obligatoires (fichier non inclus)
@@ -73,29 +75,33 @@ class CommentaireController
 
     try {
         $ticketModel = new CommentaireModel(Flight::db());
-        $id = $_POST['id'];
+        if (isset($_POST['id_commentaire'])) {
+            $id = $_POST['id_commentaire'];
+            $data = [
+                'commentaire' => $_POST['commentaire'],
+            ];
+    
+            // Validation minimale
+            if (empty($data['commentaire'])) {
+                throw new Exception('Le sujet est obligatoire');
+            }
+    
+            // Mise à jour
+            $success = $ticketModel->update($id, $data);
+    
+            if ($success) {
+                $_SESSION['flash_message'] = [
+                    'type' => 'success',
+                    'text' => 'Ticket mis à jour avec succès'
+                ];
+            } else {
+                throw new Exception('Échec de la mise à jour');
+            }
+        }
+        
 
         // Préparation des données
-        $data = [
-            'commentaire' => $_POST['commentaire'],
-        ];
-
-        // Validation minimale
-        if (empty($data['commentaire'])) {
-            throw new Exception('Le sujet est obligatoire');
-        }
-
-        // Mise à jour
-        $success = $ticketModel->update($id, $data);
-
-        if ($success) {
-            $_SESSION['flash_message'] = [
-                'type' => 'success',
-                'text' => 'Ticket mis à jour avec succès'
-            ];
-        } else {
-            throw new Exception('Échec de la mise à jour');
-        }
+      
 
     } catch (Exception $e) {
         $_SESSION['flash_message'] = [

@@ -139,7 +139,7 @@
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <form action="/commentaire/evaluation" method="post">
-                                                                <input type="hidden" name="id_ticket_produit" value="<?= $produit['id_produit'] ?>">
+                                                                <input type="hidden" name="id_ticket_produit" value="<?= $produit['id_ticket'] ?>">
                                                                 <div class="modal-body">
                                                                     <div class="mb-3">
                                                                         <label class="form-label">Note</label>
@@ -149,11 +149,12 @@
                                                                                    data-value="<?= $i ?>" style="cursor: pointer; font-size: 1.5rem;"></i>
                                                                             <?php endfor; ?>
                                                                             <input type="hidden" name="note" value="<?= $note ?>">
+                                                                            <input type="hidden" name="note" value="<?= $note ?>">
                                                                         </div>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label for="commentaire<?= $produit['id_produit'] ?>" class="form-label">Commentaire</label>
-                                                                        <textarea class="form-control" id="commentaire<?= $produit['id_produit'] ?>" 
+                                                                        <textarea class="form-control" id="commentaire<?= $produit['id_commentaire'] ?>" 
                                                                                   name="commentaire" rows="3"><?= htmlspecialchars($produit['commentaire'] ?? '') ?></textarea>
                                                                     </div>
                                                                 </div>
