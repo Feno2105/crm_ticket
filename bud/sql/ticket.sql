@@ -109,3 +109,9 @@ CREATE TABLE `ecart` (
   KEY `id_prevision` (`id_prevision`),
   KEY `id_realisation` (`id_realisation`)
 ) ;
+CREATE TABLE horaire
+(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    horaire INT,
+    argent DOUBLE NOT NULL
+); 
