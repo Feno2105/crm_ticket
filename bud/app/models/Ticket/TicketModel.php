@@ -100,4 +100,13 @@ class TicketModel
         $result = $stmt->fetch();
         return $result ?: null;
     }
+    public function updateStatut(int $ticketId, int $newStatutId): bool
+{
+    $query = "UPDATE ticket SET id_statut = :statut WHERE id = :id";
+    $stmt = $this->db->prepare($query);
+    return $stmt->execute([
+        ':statut' => $newStatutId,
+        ':id' => $ticketId
+    ]);
+}
 }

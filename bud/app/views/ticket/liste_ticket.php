@@ -110,26 +110,7 @@
                                                                     <?php endif; ?>
                                                                 </td>
 
-                                                                <!-- Boutons d'action -->
-                                                                <td>
-                                                                    <!-- ... autres boutons ... -->
 
-                                                                    <?php if ($ticket['is_assigned']): ?>
-                                                                        <!-- Bouton Réassigner -->
-                                                                        <button type="button" class="btn btn-outline-success btn-sm"
-                                                                            data-bs-toggle="modal"
-                                                                            data-bs-target="#changeAssignment<?= $ticket['id'] ?>">
-                                                                            <i class="bi bi-people"></i> Réassigner
-                                                                        </button>
-                                                                    <?php else: ?>
-                                                                        <!-- Bouton Assigner -->
-                                                                        <button type="button" class="btn btn-outline-info btn-sm"
-                                                                            data-bs-toggle="modal"
-                                                                            data-bs-target="#assignTicket<?= $ticket['id'] ?>">
-                                                                            <i class="bi bi-person-plus"></i> Assigner
-                                                                        </button>
-                                                                    <?php endif; ?>
-                                                                </td>
                                                                 <td>
                                                                     <?php if (!empty($ticket['file'])): ?>
                                                                         <a href="/uploads/<?= $ticket['file'] ?>" target="_blank">
@@ -139,6 +120,8 @@
                                                                         Aucun fichier
                                                                     <?php endif; ?>
                                                                 </td>
+
+                                                                <!-- Boutons d'action -->
                                                                 <td><?= date('d/m/Y H:i', strtotime($ticket['date_creation'])) ?></td>
                                                                 <td>
                                                                     <!-- Bouton Supprimer -->
@@ -169,6 +152,13 @@
                                                                             data-bs-toggle="modal"
                                                                             data-bs-target="#assignTicket<?= $ticket['id'] ?>">
                                                                             <i class="bi bi-person-plus"></i> Assigner
+                                                                        </button>
+                                                                    <?php endif; ?>
+                                                                    <?php if ($ticket['is_assigned'] && $ticket['id_statut'] != 3): ?>
+                                                                        <button type="button" class="btn btn-outline-dark btn-sm"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#closeTicket<?= $ticket['id'] ?>">
+                                                                            <i class="bi bi-lock"></i> Fermer
                                                                         </button>
                                                                     <?php endif; ?>
                                                                 </td>
@@ -243,6 +233,90 @@
                                                                                 <div class="modal-footer">
                                                                                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
                                                                                     <button type="submit" class="btn btn-outline-primary">Enregistrer</button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Modal de fermeture de ticket -->
+                                                            <div class="modal fade" id="closeTicket<?= $ticket['id'] ?>" tabindex="-1">
+                                                                <div class="modal-dialog modal-dialog-centered">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header bg-dark text-white">
+                                                                            <h5 class="modal-title">
+                                                                                <i class="bi bi-lock-fill"></i> Fermer le ticket #<?= $ticket['id'] ?>
+                                                                            </h5>
+                                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <form action="/payment/calculate" method="post" id="closeForm<?= $ticket['id'] ?>">
+                                                                                <input type="hidden" name="ticket_id" value="<?= $ticket['id'] ?>">
+
+                                                                                <!-- Informations de base -->
+                                                                                <div class="row mb-3">
+                                                                                    <div class="col-md-6">
+                                                                                        <label class="form-label">Sujet</label>
+                                                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($ticket['sujet']) ?>" readonly>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <label class="form-label">Assigné à</label>
+                                                                                        <input type="text" class="form-control"
+                                                                                            value="<?= htmlspecialchars($ticket['assignment']['agent_nom'] ?? 'Non assigné') ?>"
+                                                                                            readonly>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <!-- Saisie du temps -->
+                                                                                <div class="mb-3">
+                                                                                    <label for="hours<?= $ticket['id'] ?>" class="form-label">Temps passé (heures)</label>
+                                                                                    <div class="input-group">
+                                                                                        <input type="number" step="0.25" min="0.25" max="100"
+                                                                                            class="form-control"
+                                                                                            id="hours<?= $ticket['id'] ?>"
+                                                                                            name="hours"
+                                                                                            required
+                                                                                            onchange="updateCalculation(<?= $ticket['id'] ?>)">
+                                                                                        <span class="input-group-text">heures</span>
+                                                                                    </div>
+                                                                                    <small class="text-muted">Utilisez 0.25 pour 15 minutes, 0.5 pour 30 minutes, etc.</small>
+                                                                                </div>
+
+                                                                                <!-- Affichage du calcul -->
+                                                                                <div class="card mb-3">
+                                                                                    <div class="card-header bg-light">
+                                                                                        <strong>Calcul du montant</strong>
+                                                                                    </div>
+                                                                                    <div class="card-body">
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-6">
+                                                                                                <p class="mb-1">Taux horaire:</p>
+                                                                                                <h5 id="rate<?= $ticket['id'] ?>">
+                                                                                                    <?= number_format($horaire_actuel['argent'] / $horaire_actuel['horaire'], 2) ?> €/h
+                                                                                                </h5>
+                                                                                            </div>
+                                                                                            <div class="col-md-6">
+                                                                                                <p class="mb-1">Total:</p>
+                                                                                                <h5 id="total<?= $ticket['id'] ?>">0.00 €</h5>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <!-- Commentaire optionnel -->
+                                                                                <div class="mb-3">
+                                                                                    <label for="comment<?= $ticket['id'] ?>" class="form-label">Commentaire (optionnel)</label>
+                                                                                    <textarea class="form-control" id="comment<?= $ticket['id'] ?>" name="comment" rows="2"></textarea>
+                                                                                </div>
+
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                                                        <i class="bi bi-x-circle"></i> Annuler
+                                                                                    </button>
+                                                                                    <button type="submit" class="btn btn-primary">
+                                                                                        <i class="bi bi-check-circle"></i> Confirmer la fermeture
+                                                                                    </button>
                                                                                 </div>
                                                                             </form>
                                                                         </div>

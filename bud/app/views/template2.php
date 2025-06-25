@@ -4,18 +4,6 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 
-// Activer le reporting d'erreurs (à mettre ABSOLUMENT en première ligne)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-
-// Démarrer la session si nécessaire
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -477,6 +465,20 @@ if (session_status() === PHP_SESSION_NONE) {
                     }
                 });
             });
+        });
+    </script>
+    <script>
+        function updateCalculation(ticketId) {
+            const hours = parseFloat(document.getElementById('hours' + ticketId).value) || 0;
+            const rate = <?= $horaire_actuel ? ($horaire_actuel['argent'] / $horaire_actuel['horaire']) : 0 ?>;
+            const total = hours * rate;
+
+            document.getElementById('total' + ticketId).innerText = total.toFixed(2) + ' €';
+        }
+
+        // Initialisation au chargement du modal
+        document.getElementById('closeTicket<?= $ticket['id'] ?>').addEventListener('shown.bs.modal', function() {
+            updateCalculation(<?= $ticket['id'] ?>);
         });
     </script>
 </body>

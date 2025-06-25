@@ -14,6 +14,7 @@ use app\controllers\TypeFormController;
 use app\controllers\ticket\TicketController;
 use app\controllers\ticket\NoteController;
 use app\controllers\ticket\CommentaireController;
+use app\controllers\ticket\PayementController;
 use flight\net\Router;
 use flight\Engine;
 
@@ -67,11 +68,13 @@ $router->group('/finance', function () use ($router) {
 
 $router->group('/ticket', function () use ($router) {
     $ticket_controller = new TicketController();
+    $payement_controller = new PayementController();
     $router->get('/', [$ticket_controller, 'entry']);
     $router->post('/create', [$ticket_controller, 'add']);
     $router->get('/delete', [$ticket_controller, 'delete']);
     $router->post('/update', [$ticket_controller, 'modified']);
     $router->post('/assigner', [$ticket_controller, 'createAssignement']);
+    $router->post('/calculate',  [$payement_controller, 'calculate']);
 });
 
 //==================commentaire=================
