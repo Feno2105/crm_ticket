@@ -101,4 +101,22 @@ class ClientController
 
         Flight::redirect('/CRM/client');
     }
+    public function liste(){
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $message = [];
+        if (isset($_SESSION['flash_message'])) {
+            $message = $_SESSION['flash_message'];
+            unset($_SESSION['flash_message']); // Important: supprimer le message après l'avoir récupéré
+        }
+        $clients = new ClientModel(Flight::db());
+        $clients->findAll();
+        $data = ['page' => "ticket/commentaire", 'clients' => $clients->findAll(),  'message' => $message];
+        Flight::render('template2', $data);
+    }
+
+    public function avis(){
+        
+    }
 }

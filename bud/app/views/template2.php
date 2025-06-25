@@ -304,7 +304,7 @@ if (session_status() === PHP_SESSION_NONE) {
             <li class="nav-item">
                 <a class="nav-link " href="/inserer">
                     <i class="bi bi-grid"></i>
-                    <span>Insert a budget</span>
+                    <span>Budget</span>
                 </a>
             </li>
 
@@ -363,6 +363,13 @@ if (session_status() === PHP_SESSION_NONE) {
                 </ul>
             </li><!-- End Icons Nav -->
 
+            <li class="nav-item">
+                <a class="nav-link " href="/ticket">
+                    <i class="bi bi-ticket"></i>
+                    <span>Tickets</span>
+                </a>
+            </li>
+
             <li class="nav-heading">Pages</li>
 
             <li class="nav-item">
@@ -375,6 +382,13 @@ if (session_status() === PHP_SESSION_NONE) {
                 <a class="nav-link collapsed" href="/vente">
                     <i class="bi bi-person-circle"></i>
                     <span>Vente</span>
+                </a>
+            </li><!-- End Profile Page Nav -->
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="/commentaire">
+                    <i class="bi bi-chat"></i>
+                    <span>avis-client</span>
                 </a>
             </li><!-- End Profile Page Nav -->
         </ul>

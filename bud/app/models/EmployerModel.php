@@ -27,7 +27,9 @@ class EmployerModel
 
             $result_select = $pstmt->fetchAll();
             if (count($result_select) == 1) {
-                session_start();
+                if (session_status() === PHP_SESSION_NONE) {
+                    session_start();
+                }
                 $_SESSION['id_utilisateur'] = $result_select[0]["id"];
                 return true;
             }

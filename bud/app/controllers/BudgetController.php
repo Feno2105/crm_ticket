@@ -2,9 +2,9 @@
 
 namespace app\controllers;
 
+use app\models\BudgetModel;
 use app\models\TypeModel;
 use app\models\NatureModel;
-use app\models\BudgetModel;
 use Flight;
 use app\models\SRMmodels\VenteModel;
 
@@ -17,45 +17,94 @@ class BudgetController
         $natureModel = new NatureModel(Flight::db());
         $natures = $natureModel->findAll();
         $TypeModel = new TypeModel(Flight::db());
-        $types = $TypeModel->findAll();
-        $data = ['page' => "insertBudget", 'natures' => $natures, 'types' => $types];
-        Flight::render('template2', $data);
-    }
-    public function validation()
-    {
-        $BudgetModel = new BudgetModel(Flight::db());
-        $types = $BudgetModel->getAll();
-        $data = ['page' => "insertBudget", 'types' => $types];
-        Flight::render('template2', $data);
-    }
-    public function validate()
-    {
-        $BudgetModel = new BudgetModel(Flight::db());
-        $data = array();
-        $data[0] = $_GET['id'];
-        $BudgetModel->valider($data);
-        $budget = $BudgetModel->getAll();
-        session_start();
-        $rand = rand(1, 15);
-        $data2[0]  = $_SESSION['idP'];
-        $data2[1] = $rand;
-        $data2[2] = $_SESSION['prix'] * $rand;
-        $data2[4] = $_SESSION['annee'];
-        $idT = 0;
-        $bud = $BudgetModel->getById($data);
-        $idT = $bud['idT'];
-
-        if ($idT == 5) {
-            $VenteModel = new VenteModel(Flight::db());
-            for ($i = $_SESSION['mois']; $i < 12; $i++) {
-                $data2[3] = $i;
-                $VenteModel->insert($data2);
-            }
-            $data = ['page' => "budget", 'budgets' => $budget];
-            Flight::render('template', $data);
-        } else {
-            $data = ['page' => "budget", 'budgets' => $budget];
-            Flight::render('template', $data);
+        $budgetModel = new BudgetModel(Flight::db());
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if(!isset($_SESSION['idD'])) {
+            Flight::redirect('/');
+            return;
         }
+        if($_SESSION['idD'] == 1){
+            $liste_previsions = $budgetModel->getAllPrev();
+            $liste_realisations = $budgetModel->getAll();
+        }
+        else {
+            $liste_previsions = $budgetModel->getByDeptPrev($_SESSION['idD']);
+            $liste_realisations = $budgetModel->getByDept($_SESSION['idD']);
+        }
+        $liste_types = $TypeModel->findAll();
+        $data = ['page' => "insertBudget",'liste_previsions' => $liste_previsions ,'liste_realisations' => $liste_realisations ,'liste_types'=>$liste_types
+         ,'natures' => $natures];
+        Flight::render('template2', $data);
+    }
+
+    public function createPrevision() {
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    if (!isset($_SESSION['idD'])) {
+        Flight::redirect('/');
+        return;
+    }
+    $data = [
+        'id_dept' => $_SESSION['idD'],
+        'valeur'  => (string)$_POST['valeur'],
+        'type'    => (string)$_POST['type'],
+        'mois'    => (string)$_POST['mois'],
+        'annee'   => (string)$_POST['annee'],
+        'propos'  => (string)$_POST['propos']
+    ];
+
+    $previsionModel = new BudgetModel();
+    $success = $previsionModel->createPrev($data);
+
+    if ($success) {
+        Flight::redirect('/inserer');
+        $_SESSION['flash_success'] = "Prévision enregistrée avec succès.";
+    } else {
+     $_SESSION['flash_error'] = "Erreur lors de l'enregistrement de la prévision.";
     }
 }
+ public function createRealisation() {
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    if (!isset($_SESSION['idD'])) {
+        Flight::redirect('/');
+        return;
+    }
+    
+    $data = [
+        'id_dept' => (int)$_POST['id_dept'],
+        'valeur'  => (string)$_POST['valeur'],
+        'id_prevision' => (string)$_POST['prevision_id'],
+        'mois'    => (string)$_POST['mois'],
+        'annee'   => (string)$_POST['annee'],
+        'propos'  => (string)$_POST['propos']
+    ];
+    
+    $realisationModel = new BudgetModel();
+    $value = $realisationModel->getByPrev($data['id_prevision']);
+    if ($value[0]['valeur'] < $data['valeur']) {
+        $_SESSION['flash_error'] = "La valeur de la réalisation ne peut pas dépasser la valeur de la prévision.";
+        Flight::redirect('/inserer');
+        return;
+        # code...
+    }
+    $success = $realisationModel->create($data);
+    
+
+    if ($success) {
+        Flight::redirect('/inserer');
+        $_SESSION['flash_success'] = "Réalisation enregistrée avec succès.";
+        $montant = $value[0]['valeur'] - $data['valeur'];
+        $data2 = [
+        'id_dept' => (int)$_POST['id_dept'],
+        'valeur'  => (string)$value['valeur'],
+        'prevision_id' => (string)$_POST['prevision_id'],
+        'mois'    => (string)$_POST['mois'],
+        'annee'   => (string)$_POST['annee'],
+        'realisation'  => (string)$success
+        ];
+    $realisationModel->saveEcart($data2);
+    } else {
+     $_SESSION['flash_error'] = "Erreur lors de l'enregistrement de la réalisation.";
+    }
+}
+}
+

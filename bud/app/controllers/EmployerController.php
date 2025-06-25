@@ -20,12 +20,17 @@ class EmployerController
     }
     public function validation()
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        ;
         $EmployerModel = new EmployerModel(Flight::db());
         $donne = array();
         $donne[0] = $_POST['nom'];
         $donne[1] = $_POST['mdp'];
         $donne[2] = $_POST['departement'];
         if ($Employer = $EmployerModel->getLogin($donne)) {
+            $_SESSION['idD'] = $donne[2];
             $data = ['page' => "welcome", 'employer' => $Employer];
             Flight::render('template2', $data);
         } else {

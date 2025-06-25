@@ -31,54 +31,58 @@
                 series: [{
                     name: <?php echo json_encode($name[0]) ?>,
                     data: <?php echo json_encode($quantity); ?>,
-                }, ],
+                }],
                 chart: {
+                    type: 'bar',
                     height: 350,
-                    type: 'area',
                     toolbar: {
                         show: false
                     },
                 },
-                markers: {
-                    size: 4
-                },
-                colors: ['#4154f1'],
-                fill: {
-                    type: "gradient",
-                    gradient: {
-                        shadeIntensity: 1,
-                        opacityFrom: 0.3,
-                        opacityTo: 0.4,
-                        stops: [0, 90, 100]
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        horizontal: false,
+                        columnWidth: '55%',
                     }
                 },
+                colors: ['#4154f1', '#2eca6a', '#ff771d'],
                 dataLabels: {
                     enabled: false
                 },
                 stroke: {
-                    curve: 'smooth',
-                    width: 2
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
                 },
                 xaxis: {
-                    type: 'datetime',
-                    categories: ["01", "02",
-                        "03", "04",
-                        "05",
-                        "06", "07", "08", "09",
-                        "10",
-                        "11", "12"
-                    ]
+                    categories: ["Jan", "Fév", "Mar", "Avr", "Mai", "Jun", 
+                                "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc"],
+                    labels: {
+                        style: {
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                yaxis: {
+                    title: {
+                        text: "Quantité"
+                    }
+                },
+                fill: {
+                    opacity: 1
                 },
                 tooltip: {
-                    x: {
-                        format: 'MM'
-                    },
+                    y: {
+                        formatter: function (val) {
+                            return val + " unités"
+                        }
+                    }
                 }
             }).render();
         });
     </script>
 <?php } ?>
-
 <?php if (isset($moinsVendues)) { ?>
 
     <!-- Top Selling -->
