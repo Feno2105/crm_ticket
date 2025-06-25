@@ -97,7 +97,9 @@ class ProductModel
     public function findbyTicket($Client)
     {
         $sql = "SELECT p.* , cp.nom_categorie ,tk.* from produit p JOIN categorie_produit cp ON cp.id_categorie = p.id_categorie 
-                JOIN ticket_Produits tk ON tk.id_produit = p.id_produit WHERE tk.id_Client=:client ";
+                JOIN ticket_Produits tk ON tk.id_produit = p.id_produit
+                LEFT JOIN commentaire_Ticket t ON tk.id_ticket = t.id_ticket_produit 
+                JOIN payement_ticket pa ON pa.ticket_id=tk.id_ticket   WHERE tk.id_Client=:client ";
         try {
 
             $pstmt = $this->db->prepare($sql);

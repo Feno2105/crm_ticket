@@ -29,8 +29,7 @@ CREATE TABLE NATURE (
 
 CREATE TABLE TYPE (
   id int(11) NOT NULL AUTO_INCREMENT,
-  idC int(11) DEFAULT NULL,
-  libele varchar(100) DEFAULT NULL,
+  nom varchar(100) DEFAULT NULL,
   PRIMARY KEY (id)
 );
 

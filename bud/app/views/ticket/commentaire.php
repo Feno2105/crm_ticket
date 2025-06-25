@@ -140,6 +140,7 @@
                                                             </div>
                                                             <form action="/commentaire/evaluation" method="post">
                                                                 <input type="hidden" name="id_ticket_produit" value="<?= $produit['id_ticket'] ?>">
+                                                                <input type="hidden" name="id_ticket_produit" value="<?= $produit['id_commentaire'] ?>">
                                                                 <div class="modal-body">
                                                                     <div class="mb-3">
                                                                         <label class="form-label">Note</label>
