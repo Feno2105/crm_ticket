@@ -2,6 +2,7 @@
 
 namespace App\Models\Ticket;
 
+use PDO;
 use Flight;
 
 class TicketModel
@@ -108,5 +109,17 @@ class TicketModel
         ':statut' => $newStatutId,
         ':id' => $ticketId
     ]);
+}
+public function getAllWithDetails()
+{
+    $query = "SELECT t.*, p.nom as priorite_nom, s.desc as statut_nom 
+              FROM ticket t
+              JOIN priorite p ON t.priorite = p.id
+              JOIN statut s ON t.id_statut = s.id
+              ORDER BY t.date_creation DESC";
+    
+    $stmt = $this->db->prepare($query);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 }

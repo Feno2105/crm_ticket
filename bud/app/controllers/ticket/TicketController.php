@@ -6,6 +6,7 @@ use Exception;
 use app\models\Ticket\TicketModel;
 use app\models\Ticket\AssignementModel;
 use app\models\Ticket\StatutTicketModel;
+use app\models\Ticket\HoraireModel;
 
 use Flight;
 
@@ -14,62 +15,63 @@ class TicketController
 
     public function __construct() {}
     public function entry()
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        $message = [];
-        if (isset($_SESSION['flash_message'])) {
-            $message = $_SESSION['flash_message'];
-            unset($_SESSION['flash_message']);
-        }
-    
-        // Initialisation des modèles
-        $ticketModel = new TicketModel(Flight::db());
-        $assignmentModel = new AssignementModel(Flight::db());
-        $statusModel = new StatutTicketModel(Flight::db());
-    
-        // Récupération des données
-        $tickets = $ticketModel->getAll();
-        $priorites = $ticketModel->getpriorite();
-        $statuts = $statusModel->getAll();
-        $agents = $assignmentModel->getAllAgents();
-    
-        // Pour chaque ticket, ajouter les informations d'assignation et de statut
-        foreach ($tickets as &$ticket) {
-            // Vérification d'assignation optimisée
-            $isAssigned = $assignmentModel->isTicketAlreadyAssigned($ticket['id']);
-            
-            // Si assigné, récupère les détails complets
-            if ($isAssigned) {
-                $ticket['assignment'] = $assignmentModel->getAssignmentByTicket($ticket['id']);
-            } else {
-                $ticket['assignment'] = null;
-            }
-    
-            // Statut - trouve le nom du statut correspondant à l'ID
-            foreach ($statuts as $statut) {
-                if ($statut['id'] == $ticket['id_statut']) {
-                    $ticket['statut_nom'] = $statut['desc'];
-                    break;
-                }
-            }
-    
-            // Ajout d'un flag simple pour la vue
-            $ticket['is_assigned'] = $isAssigned;
-        }
-    
-        $data = [
-            'page' => "ticket/liste_ticket",
-            'liste_reaction_model' => $tickets,
-            'liste_priorite' => $priorites,
-            'liste_statuts' => $statuts,
-            'liste_agents' => $agents,
-            'message' => $message
-        ];
-    
-        Flight::render('template2', $data);
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
     }
+    
+    // Gestion des messages flash
+    $message = $_SESSION['flash_message'] ?? [];
+    unset($_SESSION['flash_message']);
+
+    // Initialisation des modèles
+    $ticketModel = new TicketModel(Flight::db());
+    $assignmentModel = new AssignementModel(Flight::db());
+    $statusModel = new StatutTicketModel(Flight::db());
+    $horaireModel = new HoraireModel(Flight::db());
+
+    // Récupération des données
+    $tickets = $ticketModel->getAllWithDetails(); // Méthode à créer (voir plus bas)
+    $priorites = $ticketModel->getpriorite();
+    $statuts = $statusModel->getAll();
+    $agents = $assignmentModel->getAllAgents();
+    $horaire_actuel = $horaireModel->getCurrentRate();
+
+    // Enrichissement des données tickets
+    foreach ($tickets as &$ticket) {
+        // Assignation
+        $ticket['assignment'] = $assignmentModel->getAssignmentByTicket($ticket['id']);
+        $ticket['is_assigned'] = !empty($ticket['assignment']);
+
+        // Statut
+        foreach ($statuts as $statut) {
+            if ($statut['id'] == $ticket['id_statut']) {
+                $ticket['statut_nom'] = $statut['desc'];
+                $ticket['can_close'] = ($statut['id'] != 3); // Constante à définir
+                break;
+            }
+        }
+
+        // Calcul préliminaire pour le modal
+        if ($horaire_actuel) {
+            $ticket['taux_horaire'] = $horaire_actuel['argent'] / $horaire_actuel['horaire'];
+        }
+    }
+
+    // Préparation des données pour la vue
+    $data = [
+        'page' => "ticket/liste_ticket",
+        'liste_reaction_model' => $tickets,
+        'liste_priorite' => $priorites,
+        'liste_statuts' => $statuts,
+        'liste_agents' => $agents,
+        'horaire_actuel' => $horaire_actuel,
+        'message' => $message,
+        'STATUT_FERME' => 3 // Constante du statut "Fermé"
+    ];
+
+    Flight::render('template2', $data);
+}
     public function add()
     {
         if (session_status() === PHP_SESSION_NONE) {
