@@ -38,3 +38,44 @@ CREATE TABLE payement_ticket(
     FOREIGN KEY (agent_id) REFERENCES EMPLOYER(id)
 );
 
+CREATE TABLE `ecart` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_dept` int(11) NOT NULL,
+  `valeur` int(11) DEFAULT NULL,
+  `id_prevision` int(11) DEFAULT NULL,
+  `id_realisation` int(11) DEFAULT NULL,
+  `mois` int(11) DEFAULT NULL,
+  `annee` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_dept` (`id_dept`),
+  KEY `id_prevision` (`id_prevision`),
+  KEY `id_realisation` (`id_realisation`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+
+CREATE TABLE `prevision` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_dept` int(11) NOT NULL,
+  `valeur` int(11) DEFAULT NULL,
+  `id_type` int(11) DEFAULT NULL,
+  `mois` int(11) DEFAULT NULL,
+  `annee` int(11) DEFAULT NULL,
+  `propos` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_dept` (`id_dept`),
+  KEY `id_type` (`id_type`),
+  CONSTRAINT `prevision_ibfk_1` FOREIGN KEY (`id_dept`) REFERENCES `DEPARTEMENT` (`id`),
+  CONSTRAINT `prevision_ibfk_2` FOREIGN KEY (`id_type`) REFERENCES `TYPE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4
+
+CREATE TABLE `realisation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_dept` int(11) NOT NULL,
+  `valeur` int(11) DEFAULT NULL,
+  `id_prevision` int(11) DEFAULT NULL,
+  `mois` int(11) DEFAULT NULL,
+  `annee` int(11) DEFAULT NULL,
+  `propos` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_dept` (`id_dept`),
+  KEY `id_prevision` (`id_prevision`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4
