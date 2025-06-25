@@ -173,14 +173,14 @@ $type_reaction_list = ['positive', 'negative', 'neutre'];
                                                                                     <!-- Champ Sujet -->
                                                                                     <div class="mb-3">
                                                                                         <label for="sujet" class="form-label">Sujet</label>
-                                                                                        <input type="text" class="form-control" id="sujet" placeholder="Sujet du ticket" name="sujet" required>
+                                                                                        <input type="text" class="form-control" id="sujet" name="sujet" value="<?= $liste_reaction_model[$i]['nom_reaction'] ?>">
                                                                                     </div>
 
                                                                                     <!-- Champ Description (inchangé) -->
                                                                                     <div class="mb-3">
                                                                                         <label for="exampleFormControlTextarea1" class="form-label">Description</label>
                                                                                         <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"
-                                                                                            placeholder="Description" name="description"><?= $liste_reaction_model[$i]['nom_reaction'] ?></textarea>
+                                                                                            placeholder="Description" name="description"></textarea>
                                                                                     </div>
 
                                                                                     <!-- Champ Priorité (remplace Type de réaction) -->
