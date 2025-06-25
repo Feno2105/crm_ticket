@@ -51,6 +51,8 @@
                                                             <th>Libellé</th>
                                                             <th>Montant</th>
                                                             <th>Catégorie</th>
+                                                            <th>Date</th>
+                                                            <th>Département</th>
                                                             <th>Actions</th>
                                                         </tr>
                                                     </thead>
@@ -58,10 +60,11 @@
                                                         <?php /* Boucle foreach pour les prévisions */ ?>
                                                         <?php foreach ($liste_previsions as $prevision): ?>
                                                             <tr>
-                                                                <td><?= htmlspecialchars($prevision['libelle']) ?></td>
-                                                                <td><?= number_format($prevision['montant'], 2, ',', ' ') ?> €</td>
-                                                                <td><?= htmlspecialchars($prevision['categorie']) ?></td>
-                                                                <td><?= date('d/m/Y', strtotime($prevision['date'])) ?></td>
+                                                                <td><?= htmlspecialchars($prevision['propos']) ?></td>
+                                                                <td><?= number_format($prevision['valeur'], 2, ',', ' ') ?> Ar</td>
+                                                                <td><?= htmlspecialchars($prevision['type']) ?></td>
+                                                                <td><?= date('d/m/Y', strtotime($prevision['mois'] . '/01/' . $prevision['annee'])) ?></td>
+                                                                <td><?= htmlspecialchars($prevision['departement']) ?></td>
                                                                 <td>
                                                                     <button class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editPrevision<?= $prevision['id'] ?>">
                                                                         <i class="bi bi-pencil"></i>
@@ -81,10 +84,10 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Libellé</th>
-                                                            <th>Montant</th>
-                                                            <th>Catégorie</th>
-                                                            <th>Date</th>
                                                             <th>Prévision associée</th>
+                                                            <th>Montant</th>
+                                                            <th>Date</th>
+                                                            <th>Département</th>
                                                             <th>Actions</th>
                                                         </tr>
                                                     </thead>
@@ -92,11 +95,12 @@
                                                         <?php /* Boucle foreach pour les réalisations */ ?>
                                                         <?php foreach ($liste_realisations as $realisation): ?>
                                                             <tr>
-                                                                <td><?= htmlspecialchars($realisation['libelle']) ?></td>
-                                                                <td><?= number_format($realisation['montant'], 2, ',', ' ') ?> €</td>
-                                                                <td><?= htmlspecialchars($realisation['categorie']) ?></td>
-                                                                <td><?= date('d/m/Y', strtotime($realisation['date'])) ?></td>
-                                                                <td><?= htmlspecialchars($realisation['prevision_libelle'] ?? 'Non associée') ?></td>
+                                                                <td><?= htmlspecialchars($realisation['propos']) ?></td>
+                                                                <td>
+                                                                    <?= htmlspecialchars($realisation['prevision_propos'] ?? 'Non associé') ?>
+                                                                <td><?= number_format($realisation['valeur'], 2, ',', ' ') ?> Ar</td>
+                                                                <td><?= date('d/m/Y', strtotime($realisation['mois'] . '/01/' . $realisation['annee'])) ?></td>
+                                                                <td><?= htmlspecialchars($realisation['departement']) ?></td>
                                                                 <td>
                                                                     <button class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editRealisation<?= $realisation['id'] ?>">
                                                                         <i class="bi bi-pencil"></i>
@@ -152,12 +156,17 @@
                         <div class="tab-pane fade profile-edit pt-3" id="budget-add-realisation">
                             <form action="/budget/create-realisation" method="post">
                                 <div class="mb-3">
+                                    <label for="propos" class="form-label">Propos</label>
+                                    <input type="text" class="form-control" id="propos" name="propos" required>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="number" class="form-control" id="id_dept" name="id_dept" value="<?= $_SESSION['idD'] ?>" hidden>
                                     <label for="prevision_id" class="form-label">Associer à une prévision</label>
                                     <select class="form-select" id="prevision_id" name="prevision_id">
                                         <option value="">Non associé</option>
                                         <?php /* Boucle foreach pour les prévisions */ ?>
                                         <?php foreach ($liste_previsions as $prevision): ?>
-                                            <option value="<?= $prevision['id'] ?>"><?= htmlspecialchars($prevision['propos']) ?></option>
+                                            <option value="<?= $prevision['id'] ?>"><?= htmlspecialchars($prevision['propos']) ?><?= $prevision['id'] ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>

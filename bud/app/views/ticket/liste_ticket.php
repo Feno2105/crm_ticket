@@ -177,7 +177,7 @@
                                                                                         // Pour cet exemple, je suppose que vous avez accès à $liste_agents
                                                                                         foreach ($liste_agents ?? [] as $agent): ?>
                                                                                             <option value="<?= $agent['id'] ?>">
-                                                                                                <?= $agent['nom'] ?> <?= $agent['prenom'] ?>
+                                                                                                <?= $agent['nom'] ?>
                                                                                             </option>
                                                                                         <?php endforeach; ?>
                                                                                     </select>

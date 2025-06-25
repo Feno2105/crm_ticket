@@ -41,6 +41,7 @@ $router->get('/deleteNature', [$nature_form_controller, 'delete']);
 $BudgetController = new BudgetController();
 $router->get('/inserer', callback: [$BudgetController, 'entry']);
 $router->post('/budget/create-prevision', callback: [$BudgetController, 'createPrevision']);
+$router->post('/budget/create-realisation', callback: [$BudgetController, 'createRealisation']);
 
 // ========================== TYPE ROUTE =====================
 $type_form_controller = new TypeFormController();
