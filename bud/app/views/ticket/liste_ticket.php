@@ -161,6 +161,13 @@
                                                                             <i class="bi bi-lock"></i> Fermer
                                                                         </button>
                                                                     <?php endif; ?>
+                                                                    <?php if ($ticket['is_assigned'] && $ticket['id_statut'] != 3): ?>
+                                                                        <button type="button" class="btn btn-outline-dark btn-sm"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#closeTicket<?= $ticket['id'] ?>">
+                                                                            <i class="bi bi-lock"></i> Fermer
+                                                                        </button>
+                                                                    <?php endif; ?>
                                                                 </td>
                                                             </tr>
 
