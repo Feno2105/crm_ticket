@@ -6,6 +6,7 @@ use app\models\SRMmodels\CategorieProduitModel;
 use app\models\SRMmodels\ProductModel;
 use app\models\SRMmodels\VenteModel;
 use app\models\SRMmodels\ListeReactionModel;
+use app\models\SRMmodels\ClientModel;
 use app\models\BudgetModel;
 
 use Flight;
@@ -184,4 +185,34 @@ class ProductController
 
         Flight::redirect('/CRM/product');
     }
+    public function liste_ticket()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $message = [];
+        if (isset($_SESSION['flash_message'])) {
+            $message = $_SESSION['flash_message'];
+            unset($_SESSION['flash_message']); 
+        }
+    
+        $client = $_GET['client_id'];
+        $product = new ProductModel(Flight::db());
+        $products_data= $product->findbyTicket($client);
+    
+        // Il manque ceci :
+        $clients = (new ClientModel(Flight::db()))->findAll();
+    
+        $product_categories = new CategorieProduitModel(Flight::db());
+    
+        $data = [
+            'page' => "ticket/commentaire",
+            'products' => $products_data,
+            'product_categories' => $product_categories->findAll(),
+            'message' => $message,
+            'clients' => $clients, // nécessaire pour la vue
+        ];
+        Flight::render('template2', $data);
+    }
+    
 }

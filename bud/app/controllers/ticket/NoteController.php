@@ -3,36 +3,13 @@
 namespace app\controllers\ticket;
 
 use Exception;
-use app\models\Ticket\CommentaireModel;
+use app\models\Ticket\NoteModel;
 use Flight;
 
-class CommentaireController
+class NoteController
 {
 
     public function __construct() {}
-
-    public function entry()
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        $message = [];
-        if (isset($_SESSION['flash_message'])) {
-            $message = $_SESSION['flash_message'];
-            unset($_SESSION['flash_message']);
-        }
-        $commentaireModel = new CommentaireModel(Flight::db());
-        $commentaire = $_POST['commentaire'] ?? '';
-        $ticket = $_POST['id_ticket'] ?? '';
-        $id_com = $_POST['id_commentaire'] ?? '';
-
-        if ($commentaireModel->tableExistsAndNotEmpty()) {
-            $this->add($commentaire,$ticket);
-        } else {
-            $this->update($commentaire,$ticket);
-        }
-        
-    }
 
     public function add()
     {
@@ -40,10 +17,10 @@ class CommentaireController
             session_start();
         }
 
-        $ticketModel = new CommentaireModel();
+        $ticketModel = new NoteModel();
 
         // Récupération des données du formulaire
-        $sujet = $_POST['commentaire'] ?? '';
+        $sujet = $_POST['note'] ?? '';
         $ticket = $_POST['id_tiket'] ?? '';
         
 
@@ -72,16 +49,16 @@ class CommentaireController
     }
 
     try {
-        $ticketModel = new CommentaireModel(Flight::db());
+        $ticketModel = new NoteModel(Flight::db());
         $id = $_POST['id'];
 
         // Préparation des données
         $data = [
-            'commentaire' => $_POST['commentaire'],
+            'note' => $_POST['note'],
         ];
 
         // Validation minimale
-        if (empty($data['commentaire'])) {
+        if (empty($data['note'])) {
             throw new Exception('Le sujet est obligatoire');
         }
 
@@ -114,7 +91,7 @@ class CommentaireController
         }
         $id = $_GET['id'];
         try {
-            $liste_model = new CommentaireModel();
+            $liste_model = new NoteModel();
             $liste_model->remove($id);
             $_SESSION['flash_message'] = [
                 'type' => 'success',
