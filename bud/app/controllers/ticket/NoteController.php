@@ -3,38 +3,13 @@
 namespace app\controllers\ticket;
 
 use Exception;
-use app\models\Ticket\CommentaireModel;
+use app\models\Ticket\NoteModel;
 use Flight;
 
-class CommentaireController
+class NoteController
 {
 
     public function __construct() {}
-
-    public function entry()
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        $message = [];
-        if (isset($_SESSION['flash_message'])) {
-            $message = $_SESSION['flash_message'];
-            unset($_SESSION['flash_message']);
-        }
-        $commentaireModel = new CommentaireModel(Flight::db());
-        $commentaire = $_POST['commentaire'] ?? '';
-        $ticket = $_POST['id_ticket'] ?? '';
-       
-
-        if (!isset($_POST['id_commentaire'])) {
-            
-            $this->add($commentaire,$ticket);
-        } else {
-            $id_com = $_POST['id_commentaire'] ?? '';
-            $this->update($commentaire,$ticket);
-        }
-        
-    }
 
     public function add()
     {
@@ -42,11 +17,11 @@ class CommentaireController
             session_start();
         }
 
-        $ticketModel = new CommentaireModel();
+        $ticketModel = new NoteModel();
 
         // Récupération des données du formulaire
-        $sujet = $_POST['commentaire'] ?? '';
-        $ticket = $_POST['id_ticket_produit'] ?? '';
+        $sujet = $_POST['note'] ?? '';
+        $ticket = $_POST['id_tiket'] ?? '';
         
 
         // Validation des champs obligatoires (fichier non inclus)
@@ -74,34 +49,30 @@ class CommentaireController
     }
 
     try {
-        $ticketModel = new CommentaireModel(Flight::db());
-        if (isset($_POST['id_commentaire'])) {
-            $id = $_POST['id_commentaire'];
-            $data = [
-                'commentaire' => $_POST['commentaire'],
-            ];
-    
-            // Validation minimale
-            if (empty($data['commentaire'])) {
-                throw new Exception('Le sujet est obligatoire');
-            }
-    
-            // Mise à jour
-            $success = $ticketModel->update($id, $data);
-    
-            if ($success) {
-                $_SESSION['flash_message'] = [
-                    'type' => 'success',
-                    'text' => 'Ticket mis à jour avec succès'
-                ];
-            } else {
-                throw new Exception('Échec de la mise à jour');
-            }
-        }
-        
+        $ticketModel = new NoteModel(Flight::db());
+        $id = $_POST['id'];
 
         // Préparation des données
-      
+        $data = [
+            'note' => $_POST['note'],
+        ];
+
+        // Validation minimale
+        if (empty($data['note'])) {
+            throw new Exception('Le sujet est obligatoire');
+        }
+
+        // Mise à jour
+        $success = $ticketModel->update($id, $data);
+
+        if ($success) {
+            $_SESSION['flash_message'] = [
+                'type' => 'success',
+                'text' => 'Ticket mis à jour avec succès'
+            ];
+        } else {
+            throw new Exception('Échec de la mise à jour');
+        }
 
     } catch (Exception $e) {
         $_SESSION['flash_message'] = [
@@ -120,7 +91,7 @@ class CommentaireController
         }
         $id = $_GET['id'];
         try {
-            $liste_model = new CommentaireModel();
+            $liste_model = new NoteModel();
             $liste_model->remove($id);
             $_SESSION['flash_message'] = [
                 'type' => 'success',

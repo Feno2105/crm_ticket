@@ -20,6 +20,36 @@ CREATE TABLE ticket (
     date_creation DATETIME NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE ticket_Produits(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_ticket INT ,
+    id_produit INT,
+    id_client INT,
+    FOREIGN KEY (id_ticket) REFERENCES ticket(id),
+    FOREIGN KEY (id_produit) REFERENCES produit(id_produit),
+    FOREIGN KEY (id_client )REFERENCES client(id_client)
+);
+
+CREATE TABLE commentaire_Ticket(
+    id_commentaire INT ,
+    commentaire varchar(50),
+    id_ticket_produit INT,
+    FOREIGN KEY (id_ticket_produit) REFERENCES ticket_Produits(id)
+  
+);
+CREATE TABLE note_Ticket(
+    id_note INT ,
+    note FLOAT(2,1),
+    id_ticket_produit INT,
+    FOREIGN KEY (id_ticket_produit) REFERENCES ticket_Produits(id)
+  
+);
+
+
+CREATE TABLE statut(
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `desc` VARCHAR(255) NOT NULL
+);
 
 CREATE TABLE assignement(
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
