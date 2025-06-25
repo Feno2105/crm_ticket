@@ -234,7 +234,7 @@
                                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                         </div>
                                                                         <div class="modal-body">
-                                                                            <form action="/assignment/create" method="post">
+                                                                            <form action="/ticket/assigner" method="post">
                                                                                 <input type="hidden" name="ticket_id" value="<?= $ticket['id'] ?>">
 
                                                                                 <div class="mb-3">
