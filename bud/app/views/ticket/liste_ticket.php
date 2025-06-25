@@ -421,4 +421,18 @@
             </div>
         </div>
     </div>
+    <script>
+        function updateCalculation(ticketId) {
+            const hours = parseFloat(document.getElementById('hours' + ticketId).value) || 0;
+            const rate = <?= $horaire_actuel ? ($horaire_actuel['argent'] / $horaire_actuel['horaire']) : 0 ?>;
+            const total = hours * rate;
+
+            document.getElementById('total' + ticketId).innerText = total.toFixed(2) + ' €';
+        }
+
+        // Initialisation au chargement du modal
+        document.getElementById('closeTicket<?= $ticket['id'] ?>').addEventListener('shown.bs.modal', function() {
+            updateCalculation(<?= $ticket['id'] ?>);
+        });
+    </script>
 </section>
