@@ -23,24 +23,30 @@ class TicketController
             $message = $_SESSION['flash_message'];
             unset($_SESSION['flash_message']);
         }
-
+    
         // Initialisation des modèles
         $ticketModel = new TicketModel(Flight::db());
         $assignmentModel = new AssignementModel(Flight::db());
         $statusModel = new StatutTicketModel(Flight::db());
-
+    
         // Récupération des données
-        $tickets = $ticketModel->getAll(); // Supposons que cette méthode existe déjà
+        $tickets = $ticketModel->getAll();
         $priorites = $ticketModel->getpriorite();
-        $statuts = $statusModel->getAll(); // À implémenter dans StatusModel
+        $statuts = $statusModel->getAll();
         $agents = $assignmentModel->getAllAgents();
-
-
+    
         // Pour chaque ticket, ajouter les informations d'assignation et de statut
         foreach ($tickets as &$ticket) {
-            // Assignation
-            $ticket['assignment'] = $assignmentModel->getAssignmentByTicket($ticket['id']);
-
+            // Vérification d'assignation optimisée
+            $isAssigned = $assignmentModel->isTicketAlreadyAssigned($ticket['id']);
+            
+            // Si assigné, récupère les détails complets
+            if ($isAssigned) {
+                $ticket['assignment'] = $assignmentModel->getAssignmentByTicket($ticket['id']);
+            } else {
+                $ticket['assignment'] = null;
+            }
+    
             // Statut - trouve le nom du statut correspondant à l'ID
             foreach ($statuts as $statut) {
                 if ($statut['id'] == $ticket['id_statut']) {
@@ -48,17 +54,20 @@ class TicketController
                     break;
                 }
             }
+    
+            // Ajout d'un flag simple pour la vue
+            $ticket['is_assigned'] = $isAssigned;
         }
-
+    
         $data = [
             'page' => "ticket/liste_ticket",
             'liste_reaction_model' => $tickets,
             'liste_priorite' => $priorites,
             'liste_statuts' => $statuts,
-            'liste_agents' => $agents, // Ajout des agents
+            'liste_agents' => $agents,
             'message' => $message
         ];
-
+    
         Flight::render('template2', $data);
     }
     public function add()

@@ -99,12 +99,35 @@
                                                                         <?= $ticket['statut_nom'] ?? 'Inconnu' ?>
                                                                     </span>
                                                                 </td>
+                                                                <!-- Colonne Assignation -->
                                                                 <td>
-                                                                    <?php if (!empty($ticket['assignment'])): ?>
-                                                                        <?= $ticket['assignment']['agent_nom'] ?? 'Inconnu' ?>
-                                                                        <?= $ticket['assignment']['agent_prenom'] ?? '' ?>
+                                                                    <?php if ($ticket['is_assigned'] && !empty($ticket['assignment'])): ?>
+                                                                        <?= htmlspecialchars($ticket['assignment']['agent_nom'] ?? '') ?>
+                                                                        <?= htmlspecialchars($ticket['assignment']['agent_prenom'] ?? '') ?>
+                                                                        <span class="badge bg-success">Assigné</span>
                                                                     <?php else: ?>
-                                                                        Non assigné
+                                                                        <span class="badge bg-secondary">Non assigné</span>
+                                                                    <?php endif; ?>
+                                                                </td>
+
+                                                                <!-- Boutons d'action -->
+                                                                <td>
+                                                                    <!-- ... autres boutons ... -->
+
+                                                                    <?php if ($ticket['is_assigned']): ?>
+                                                                        <!-- Bouton Réassigner -->
+                                                                        <button type="button" class="btn btn-outline-success btn-sm"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#changeAssignment<?= $ticket['id'] ?>">
+                                                                            <i class="bi bi-people"></i> Réassigner
+                                                                        </button>
+                                                                    <?php else: ?>
+                                                                        <!-- Bouton Assigner -->
+                                                                        <button type="button" class="btn btn-outline-info btn-sm"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#assignTicket<?= $ticket['id'] ?>">
+                                                                            <i class="bi bi-person-plus"></i> Assigner
+                                                                        </button>
                                                                     <?php endif; ?>
                                                                 </td>
                                                                 <td>
@@ -133,97 +156,99 @@
                                                                     </button>
 
                                                                     <!-- Bouton Assigner/Changer assignation -->
-                                                                    <?php if (empty($ticket['assignment'])): ?>
-                                                                        <button type="button" class="btn btn-outline-info btn-sm"
-                                                                            data-bs-toggle="modal"
-                                                                            data-bs-target="#assignTicket<?= $ticket['id'] ?>">
-                                                                            <i class="bi bi-person-plus"></i> Assigner
-                                                                        </button>
-                                                                    <?php else: ?>
+                                                                    <?php if ($ticket['is_assigned']): ?>
+                                                                        <!-- Bouton Réassigner -->
                                                                         <button type="button" class="btn btn-outline-success btn-sm"
                                                                             data-bs-toggle="modal"
                                                                             data-bs-target="#changeAssignment<?= $ticket['id'] ?>">
                                                                             <i class="bi bi-people"></i> Réassigner
                                                                         </button>
+                                                                    <?php else: ?>
+                                                                        <!-- Bouton Assigner -->
+                                                                        <button type="button" class="btn btn-outline-info btn-sm"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#assignTicket<?= $ticket['id'] ?>">
+                                                                            <i class="bi bi-person-plus"></i> Assigner
+                                                                        </button>
                                                                     <?php endif; ?>
                                                                 </td>
                                                             </tr>
 
-                                                             <!-- Modal Suppression -->
-                                                             <div class="modal fade" id="confirmDelete<?= $ticket['id'] ?>" tabindex="-1">
-                                                                    <div class="modal-dialog modal-dialog-centered">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h5 class="modal-title">Confirmation</h5>
-                                                                                <button type="button" class="btn-close"
-                                                                                    data-bs-dismiss="modal"
-                                                                                    aria-label="Close"></button>
-                                                                            </div>
-                                                                            <div class="modal-body">
-                                                                                Voulez-vous confirmer la suppression de ce ticket ?
-                                                                            </div>
-                                                                            <div class="modal-footer">
+                                                            <!-- Modal Suppression -->
+                                                            <div class="modal fade" id="confirmDelete<?= $ticket['id'] ?>" tabindex="-1">
+                                                                <div class="modal-dialog modal-dialog-centered">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title">Confirmation</h5>
+                                                                            <button type="button" class="btn-close"
+                                                                                data-bs-dismiss="modal"
+                                                                                aria-label="Close"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            Voulez-vous confirmer la suppression de ce ticket ?
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button"
+                                                                                class="btn btn-outline-secondary"
+                                                                                data-bs-dismiss="modal">Non</button>
+                                                                            <a href="/ticket/delete?id=<?= $ticket['id'] ?>">
                                                                                 <button type="button"
-                                                                                    class="btn btn-outline-secondary"
-                                                                                    data-bs-dismiss="modal">Non</button>
-                                                                                <a href="/ticket/delete?id=<?= $ticket['id'] ?>">
-                                                                                    <button type="button"
-                                                                                        class="btn btn-outline-danger">Oui</button>
-                                                                                </a>
-                                                                            </div>
+                                                                                    class="btn btn-outline-danger">Oui</button>
+                                                                            </a>
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                            </div>
 
-                                                                <!-- Modal Modification -->
-                                                                <div class="modal fade" id="formticket<?= $ticket['id'] ?>" tabindex="-1">
-                                                                    <div class="modal-dialog modal-dialog-centered">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h5 class="modal-title">Modifier le ticket</h5>
-                                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                            </div>
-                                                                            <div class="modal-body">
-                                                                                <form action="/ticket/update" method="post" enctype="multipart/form-data">
-                                                                                    <div class="mb-3">
-                                                                                        <label for="sujet" class="form-label">Sujet</label>
-                                                                                        <input type="text" class="form-control" id="sujet" name="sujet" value="<?= htmlspecialchars($ticket['sujet']) ?>" required>
-                                                                                    </div>
+                                                            <!-- Modal Modification -->
+                                                            <div class="modal fade" id="formticket<?= $ticket['id'] ?>" tabindex="-1">
+                                                                <div class="modal-dialog modal-dialog-centered">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title">Modifier le ticket</h5>
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <form action="/ticket/update" method="post" enctype="multipart/form-data">
+                                                                                <div class="mb-3">
+                                                                                    <label for="sujet" class="form-label">Sujet</label>
+                                                                                    <input type="text" class="form-control" id="sujet" name="sujet" value="<?= htmlspecialchars($ticket['sujet']) ?>" required>
+                                                                                </div>
 
-                                                                                    <div class="mb-3">
-                                                                                        <label for="desc" class="form-label">Description</label>
-                                                                                        <textarea class="form-control" id="desc" rows="3" name="desc"><?= htmlspecialchars($ticket['desc'] ?? '') ?></textarea>
-                                                                                    </div>
+                                                                                <div class="mb-3">
+                                                                                    <label for="desc" class="form-label">Description</label>
+                                                                                    <textarea class="form-control" id="desc" rows="3" name="desc"><?= htmlspecialchars($ticket['desc'] ?? '') ?></textarea>
+                                                                                </div>
 
-                                                                                    <div class="mb-3">
-                                                                                        <label for="priorite" class="form-label">Priorité</label>
-                                                                                        <select class="form-select" id="priorite" name="priorite" required>
-                                                                                            <?php foreach ($liste_priorite as $priorite): ?>
-                                                                                                <option value="<?= $priorite['id'] ?>" <?= $priorite['id'] == $ticket['priorite'] ? 'selected' : '' ?>>
-                                                                                                    <?= htmlspecialchars($priorite['nom']) ?>
-                                                                                                </option>
-                                                                                            <?php endforeach; ?>
-                                                                                        </select>
-                                                                                    </div>
+                                                                                <div class="mb-3">
+                                                                                    <label for="priorite" class="form-label">Priorité</label>
+                                                                                    <select class="form-select" id="priorite" name="priorite" required>
+                                                                                        <?php foreach ($liste_priorite as $priorite): ?>
+                                                                                            <option value="<?= $priorite['id'] ?>" <?= $priorite['id'] == $ticket['priorite'] ? 'selected' : '' ?>>
+                                                                                                <?= htmlspecialchars($priorite['nom']) ?>
+                                                                                            </option>
+                                                                                        <?php endforeach; ?>
+                                                                                    </select>
+                                                                                </div>
 
-                                                                                    <div class="mb-3">
-                                                                                        <label for="file" class="form-label">Fichier joint</label>
-                                                                                        <?php if (!empty($ticket['file'])): ?>
-                                                                                            <p>Fichier actuel: <?= htmlspecialchars($ticket['file']) ?></p>
-                                                                                            <input type="hidden" name="current_file" value="<?= htmlspecialchars($ticket['file']) ?>">
-                                                                                        <?php endif; ?>
-                                                                                        <input class="form-control" type="file" id="file" name="file">
-                                                                                    </div>
+                                                                                <div class="mb-3">
+                                                                                    <label for="file" class="form-label">Fichier joint</label>
+                                                                                    <?php if (!empty($ticket['file'])): ?>
+                                                                                        <p>Fichier actuel: <?= htmlspecialchars($ticket['file']) ?></p>
+                                                                                        <input type="hidden" name="current_file" value="<?= htmlspecialchars($ticket['file']) ?>">
+                                                                                    <?php endif; ?>
+                                                                                    <input class="form-control" type="file" id="file" name="file">
+                                                                                </div>
 
-                                                                                    <div class="modal-footer">
-                                                                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
-                                                                                        <button type="submit" class="btn btn-outline-primary">Enregistrer</button>
-                                                                                    </div>
-                                                                                </form>
-                                                                            </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                                                    <button type="submit" class="btn btn-outline-primary">Enregistrer</button>
+                                                                                </div>
+                                                                            </form>
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                            </div>
 
                                                             <!-- Modal d'assignation -->
                                                             <div class="modal fade" id="assignTicket<?= $ticket['id'] ?>" tabindex="-1">
