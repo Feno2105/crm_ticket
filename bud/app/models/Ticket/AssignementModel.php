@@ -22,7 +22,8 @@ class AssignementModel
 
         $query = "INSERT INTO assignement (ticket_id, agent_id) VALUES (?, ?)";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param('ii', $ticketId, $agentId);
+        $stmt->bindParam(':t_id', $ticketId);
+        $stmt->bindParam(':a_id', $agentId);
         $stmt->execute();
 
         return $stmt->insert_id;
@@ -32,9 +33,9 @@ class AssignementModel
      * Vérifie si un ticket est déjà assigné
      */
     public function isTicketAlreadyAssigned(int $ticketId): bool {
-        $query = "SELECT COUNT(*) as count FROM assignement WHERE ticket_id = ?";
+        $query = "SELECT COUNT(*) as count FROM assignement WHERE ticket_id = :t_id";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param('i', $ticketId);
+        $stmt->bindParam(':t_id', $ticketId);
         $stmt->execute();
         
         $result = $stmt->get_result();
@@ -47,26 +48,27 @@ class AssignementModel
      * Récupère l'assignation d'un ticket
      */
     public function getAssignmentByTicket(int $ticketId): ?array {
-        $query = "SELECT a.*, e.nom as agent_nom, e.prenom as agent_prenom 
-                 FROM assignement a
-                 JOIN employer e ON a.agent_id = e.id
-                 WHERE a.ticket_id = ?";
-        
+        $query = "SELECT a.*, e.nom AS agent_nom 
+        FROM assignement a
+        JOIN EMPLOYER e ON a.agent_id = e.id
+        WHERE a.ticket_id = :t_id";
+
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param('i', $ticketId);
+        $stmt->bindParam(':t_id', $ticketId);
         $stmt->execute();
         
-        $result = $stmt->get_result();
-        return $result->fetch_assoc() ?: null;
+        $result = $stmt->fetch();
+        return $result ? $result : null;
     }
 
     /**
      * Met à jour l'assignation d'un ticket
      */
     public function updateAssignment(int $ticketId, int $newAgentId): bool {
-        $query = "UPDATE assignement SET agent_id = ? WHERE ticket_id = ?";
+        $query = "UPDATE assignement SET agent_id = :a_id WHERE ticket_id = :t_id";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param('ii', $newAgentId, $ticketId);
+        $stmt->bindParam(':a_id', $newAgentId);
+        $stmt->bindParam(':t_id', $ticketId);
         return $stmt->execute();
     }
 
@@ -74,14 +76,14 @@ class AssignementModel
      * Supprime une assignation
      */
     public function delete(int $id): bool {
-        $query = "DELETE FROM assignement WHERE id = ?";
+        $query = "DELETE FROM assignement WHERE id = :id";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param('i', $id);
+        $stmt->bindParam(':id', $id);
         return $stmt->execute();
     }
     public function getAllAgents()
     {
-        $query = "SELECT id, nom, prenom FROM employer";
+        $query = "SELECT id, nom FROM EMPLOYER";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
