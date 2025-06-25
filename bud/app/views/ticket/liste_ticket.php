@@ -89,7 +89,7 @@
                                                                 <td>
                                                                     <span class="badge bg-<?=
                                                                                             match ($ticket['statut_nom'] ?? '') {
-                                                                                                'Nouveau' => 'info',
+                                                                                                'Ouvert' => 'info',
                                                                                                 'En cours' => 'primary',
                                                                                                 'Résolu' => 'success',
                                                                                                 'Fermé' => 'secondary',
@@ -148,6 +148,82 @@
                                                                     <?php endif; ?>
                                                                 </td>
                                                             </tr>
+
+                                                             <!-- Modal Suppression -->
+                                                             <div class="modal fade" id="confirmDelete<?= $ticket['id'] ?>" tabindex="-1">
+                                                                    <div class="modal-dialog modal-dialog-centered">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title">Confirmation</h5>
+                                                                                <button type="button" class="btn-close"
+                                                                                    data-bs-dismiss="modal"
+                                                                                    aria-label="Close"></button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                Voulez-vous confirmer la suppression de ce ticket ?
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                                <button type="button"
+                                                                                    class="btn btn-outline-secondary"
+                                                                                    data-bs-dismiss="modal">Non</button>
+                                                                                <a href="/ticket/delete?id=<?= $ticket['id'] ?>">
+                                                                                    <button type="button"
+                                                                                        class="btn btn-outline-danger">Oui</button>
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Modal Modification -->
+                                                                <div class="modal fade" id="formticket<?= $ticket['id'] ?>" tabindex="-1">
+                                                                    <div class="modal-dialog modal-dialog-centered">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title">Modifier le ticket</h5>
+                                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                <form action="/ticket/update" method="post" enctype="multipart/form-data">
+                                                                                    <div class="mb-3">
+                                                                                        <label for="sujet" class="form-label">Sujet</label>
+                                                                                        <input type="text" class="form-control" id="sujet" name="sujet" value="<?= htmlspecialchars($ticket['sujet']) ?>" required>
+                                                                                    </div>
+
+                                                                                    <div class="mb-3">
+                                                                                        <label for="desc" class="form-label">Description</label>
+                                                                                        <textarea class="form-control" id="desc" rows="3" name="desc"><?= htmlspecialchars($ticket['desc'] ?? '') ?></textarea>
+                                                                                    </div>
+
+                                                                                    <div class="mb-3">
+                                                                                        <label for="priorite" class="form-label">Priorité</label>
+                                                                                        <select class="form-select" id="priorite" name="priorite" required>
+                                                                                            <?php foreach ($liste_priorite as $priorite): ?>
+                                                                                                <option value="<?= $priorite['id'] ?>" <?= $priorite['id'] == $ticket['priorite'] ? 'selected' : '' ?>>
+                                                                                                    <?= htmlspecialchars($priorite['nom']) ?>
+                                                                                                </option>
+                                                                                            <?php endforeach; ?>
+                                                                                        </select>
+                                                                                    </div>
+
+                                                                                    <div class="mb-3">
+                                                                                        <label for="file" class="form-label">Fichier joint</label>
+                                                                                        <?php if (!empty($ticket['file'])): ?>
+                                                                                            <p>Fichier actuel: <?= htmlspecialchars($ticket['file']) ?></p>
+                                                                                            <input type="hidden" name="current_file" value="<?= htmlspecialchars($ticket['file']) ?>">
+                                                                                        <?php endif; ?>
+                                                                                        <input class="form-control" type="file" id="file" name="file">
+                                                                                    </div>
+
+                                                                                    <div class="modal-footer">
+                                                                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                                                        <button type="submit" class="btn btn-outline-primary">Enregistrer</button>
+                                                                                    </div>
+                                                                                </form>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
 
                                                             <!-- Modal d'assignation -->
                                                             <div class="modal fade" id="assignTicket<?= $ticket['id'] ?>" tabindex="-1">
@@ -219,6 +295,16 @@
                                         <?php foreach ($liste_priorite as $priorite): ?>
                                             <option value="<?= $priorite['id'] ?>">
                                                 <?= htmlspecialchars($priorite['nom']) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="priorite" class="form-label">Status</label>
+                                    <select class="form-select" id="priorite" name="priorite" required>
+                                        <?php foreach ($liste_statuts as $statuts): ?>
+                                            <option value="<?= $statuts['id'] ?>">
+                                                <?= htmlspecialchars($statuts['nom']) ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>

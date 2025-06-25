@@ -26,7 +26,7 @@
 
                     <div class="col-12">
                         <label for="name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="Jean Dupont" required name="nom">
+                        <input type="text" class="form-control" id="name" value="Alice Dupont" required name="nom">
                     </div>
 
                     <div class="col-12">
@@ -39,7 +39,7 @@
                     </div>
                     <div class="col-12">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" name="mdp" id="password" class="form-control" required>
+                        <input type="password" name="mdp" id="password" class="form-control" value="password123" required>
                     </div>
 
                     <div class="col-12">
