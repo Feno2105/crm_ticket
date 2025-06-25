@@ -89,16 +89,15 @@ class BudgetModel {
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-     public function getByPrev(int $id): array {
-        $query = "SELECT *
-                 FROM prevision p
-                 WHERE p.id = :id";
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':id', $id);
-        $stmt->execute();
+    
+    public function getByPrev(int $id): array {
+    $query = "SELECT * FROM prevision WHERE id = $id LIMIT 1";
+    $stmt = $this->db->prepare($query);
+    // $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    
+    $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retourne un tableau vide si null
     }
 
     /**
@@ -128,12 +127,12 @@ class BudgetModel {
                  VALUES (:id_dept, :valeur, :id_prevision, :mois, :annee, :propos)";
 
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':id_dept', $data['id_dept'], PDO::PARAM_INT);
-        $stmt->bindParam(':valeur', $data['valeur'], PDO::PARAM_INT);
-        $stmt->bindParam(':id_prevision', $data['id_prevision'], PDO::PARAM_INT);
-        $stmt->bindParam(':mois', $data['mois'], PDO::PARAM_INT);
-        $stmt->bindParam(':annee', $data['annee'], PDO::PARAM_INT);
-        $stmt->bindParam(':propos', $data['propos'], PDO::PARAM_STR);
+        $stmt->bindValue(':id_dept', $data['id_dept'], PDO::PARAM_INT);
+        $stmt->bindValue(':valeur', $data['valeur'], PDO::PARAM_INT);
+        $stmt->bindValue(':id_prevision', $data['id_prevision'], PDO::PARAM_INT);
+        $stmt->bindValue(':mois', $data['mois'], PDO::PARAM_INT);
+        $stmt->bindValue(':annee', $data['annee'], PDO::PARAM_INT);
+        $stmt->bindValue(':propos', $data['propos'], PDO::PARAM_STR);
         
         return $stmt->execute() ? $this->db->lastInsertId() : 0;
     }
@@ -186,9 +185,9 @@ class BudgetModel {
     }
 
     /**
-     * Récupère une réalisation par son ID
+     * Récupère une réalisation par son ID dept
      */
-    public function getByDept(int $id): array {
+    public function getRealByDept(int $id): array {
         $query = "SELECT r.*, d.nom as departement, p.valeur as prevision_valeur
                  FROM realisation r
                  JOIN DEPARTEMENT d ON r.id_dept = d.id
@@ -196,7 +195,7 @@ class BudgetModel {
                  WHERE d.id = :id";
         
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id);
         $stmt->execute();
 
         return $stmt->fetch();
@@ -205,7 +204,7 @@ class BudgetModel {
     /**
      * Récupère les réalisations associées à une prévision
      */
-    public function getByPrevision(int $id_prevision): array {
+    public function getRealByPrevision(int $id_prevision): array {
         $query = "SELECT r.*, d.nom as departement
                  FROM realisation r
                  JOIN DEPARTEMENT d ON r.id_dept = d.id
@@ -243,12 +242,12 @@ class BudgetModel {
 
         $stmt = $this->db->prepare($query);
         
-        $stmt->bindValue(':id_dept', $data['id_dept'] ?? null, PDO::PARAM_INT);
-        $stmt->bindValue(':valeur', $data['valeur'] ?? null, PDO::PARAM_INT);
-        $stmt->bindValue(':id_prevision', $data['id_prevision'] ?? null, PDO::PARAM_INT);
-        $stmt->bindValue(':id_realisation', $data['id_realisation'] ?? null, PDO::PARAM_INT);
-        $stmt->bindValue(':mois', $data['mois'] ?? null, PDO::PARAM_INT);
-        $stmt->bindValue(':annee', $data['annee'] ?? null, PDO::PARAM_INT);
+        $stmt->bindValue(':id_dept', $data['id_dept'] , PDO::PARAM_INT);
+        $stmt->bindValue(':valeur', $data['valeur'] , PDO::PARAM_INT);
+        $stmt->bindValue(':id_prevision', $data['prevision_id'] , PDO::PARAM_INT);
+        $stmt->bindValue(':id_realisation', $data['realisation'], PDO::PARAM_INT);
+        $stmt->bindValue(':mois', $data['mois'] , PDO::PARAM_INT);
+        $stmt->bindValue(':annee', $data['annee'] , PDO::PARAM_INT);
 
         $stmt->execute();
         

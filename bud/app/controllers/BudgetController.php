@@ -29,7 +29,7 @@ class BudgetController
         }
         else {
             $liste_previsions = $budgetModel->getByDeptPrev($_SESSION['idD']);
-            $liste_realisations = $budgetModel->getByDept($_SESSION['idD']);
+            $liste_realisations = $budgetModel->getRealByDept($_SESSION['idD']);
         }
         $liste_types = $TypeModel->findAll();
         $data = ['page' => "insertBudget",'liste_previsions' => $liste_previsions ,'liste_realisations' => $liste_realisations ,'liste_types'=>$liste_types
@@ -70,7 +70,7 @@ class BudgetController
     }
     
     $data = [
-        'id_dept' => (int)$_POST['id_dept'],
+        'id_dept' => (string)$_POST['id_dept'],
         'valeur'  => (string)$_POST['valeur'],
         'id_prevision' => (string)$_POST['prevision_id'],
         'mois'    => (string)$_POST['mois'],
@@ -79,31 +79,36 @@ class BudgetController
     ];
     
     $realisationModel = new BudgetModel();
-    $value = $realisationModel->getByPrev($data['id_prevision']);
+    $value = $realisationModel->getByPrev((int)$data['id_prevision']);
+    if (!empty($value)) {
+        
     if ($value[0]['valeur'] < $data['valeur']) {
-        $_SESSION['flash_error'] = "La valeur de la réalisation ne peut pas dépasser la valeur de la prévision.";
-        Flight::redirect('/inserer');
-        return;
-        # code...
-    }
-    $success = $realisationModel->create($data);
+         $_SESSION['flash_error'] = "La valeur de la réalisation ne peut pas dépasser la valeur de la prévision.";
+         Flight::redirect('/inserer');
+         return;
+     }
+     
+     $success = $realisationModel->create($data);
+     if ($success) {
+         $_SESSION['flash_success'] = "Réalisation enregistrée avec succès.";
+         $montant = $value[0]['valeur'] - $data['valeur'];
+         $data2 = [
+             'id_dept' => (string)$_POST['id_dept'] ,
+             'valeur'  => (string) $montant ,
+             'prevision_id' => (string)$_POST['prevision_id'],
+             'mois'    => (string)$_POST['mois'] ,
+             'annee'   => (string)$_POST['annee'] ,
+             'realisation'  => (string)$success 
+         ];
+         // Ensure $data2 values are not null before calling saveEcar
+         $realisationModel->saveEcart($data2);
+         }
+         Flight::redirect('/inserer');
     
-
-    if ($success) {
-        Flight::redirect('/inserer');
-        $_SESSION['flash_success'] = "Réalisation enregistrée avec succès.";
-        $montant = $value[0]['valeur'] - $data['valeur'];
-        $data2 = [
-        'id_dept' => (int)$_POST['id_dept'],
-        'valeur'  => (string)$value['valeur'],
-        'prevision_id' => (string)$_POST['prevision_id'],
-        'mois'    => (string)$_POST['mois'],
-        'annee'   => (string)$_POST['annee'],
-        'realisation'  => (string)$success
-        ];
-    $realisationModel->saveEcart($data2);
     } else {
-     $_SESSION['flash_error'] = "Erreur lors de l'enregistrement de la réalisation.";
+        $_SESSION['flash_error'] = "Aucune prévision trouvée pour l'ID donné.";
+        Flight::redirect('/inserer');
+         return;
     }
 }
 }
