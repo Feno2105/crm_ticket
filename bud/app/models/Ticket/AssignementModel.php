@@ -15,7 +15,7 @@ class AssignementModel
     /**
      * Crée une nouvelle assignation
      */
-    public function create(int $ticketId, int $agentId): int {
+    public function create(string $ticketId, string $agentId): int {
     
 
         $query = "INSERT INTO assignement (ticket_id, agent_id) VALUES (:t_id, :a_id)";
