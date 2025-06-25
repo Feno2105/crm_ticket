@@ -111,6 +111,7 @@
                             <th scope="col">Nom Produit</th>
                             <th scope="col">Total Vendu</th>
                             <th scope="col">Revenu</th>
+                            
                         </tr>
                     </thead>
                     <tbody>

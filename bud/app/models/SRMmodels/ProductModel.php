@@ -93,4 +93,24 @@ class ProductModel
         $stmt->execute([':id_produit' => $id_produit]);
         echo "Suppression réussie !";
     }
+
+    public function findbyTicket($Client)
+    {
+        $sql = "SELECT p.* , cp.nom_categorie ,tk.* from produit p JOIN categorie_produit cp ON cp.id_categorie = p.id_categorie 
+                JOIN ticket_Produits tk ON tk.id_produit = p.id_produit WHERE tk.id_Client=:client ";
+        try {
+
+            $pstmt = $this->db->prepare($sql);
+            $pstmt->execute([
+                ':client' => $Client
+            ]);
+
+            $result_select = $pstmt->fetchAll();
+
+            return $result_select;
+        } catch (\Throwable $th) {
+            echo "error: " . $th->getMessage();
+        }
+        return null;
+    }
 }

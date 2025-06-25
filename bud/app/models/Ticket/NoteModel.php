@@ -3,31 +3,31 @@ namespace App\Models\Ticket;
 
 use Flight;
 
-class CommentaireModel {
+class NoteModel {
     private $db;
 
     public function __construct() {
         $this->db = Flight::db();
     }
 
-    public function create($com,$id_Ticket): int
+    public function create(array $data): int
     {
-        $query = "INSERT INTO commentaire_Ticket (commentaire , id_Ticket) 
-                  VALUES (:com, :id)";
+        $query = "INSERT INTO note_Ticket (note , id_Ticket) 
+                  VALUES (:note, :id)";
 
         $stmt = $this->db->prepare($query);
 
         // Utilisation de bindValue() au lieu de bindParam()
-        $stmt->bindValue(':com', $com);
-        $stmt->bindValue(':id', $id_Ticket);
+        $stmt->bindValue(':note', $data['note']);
+        $stmt->bindValue(':id', $data['id']);
 
         $stmt->execute();
         return (int)$this->db->lastInsertId();
-    }   
+    }
 
     public function update(array $data)
     {
-        $query = "UPDATE commentaire_Ticket SET 
+        $query = "UPDATE note_Ticket SET 
                  commentaire = :com, 
                  WHERE id_commentaire = :id";
 
@@ -42,7 +42,7 @@ class CommentaireModel {
      */
     public function remove($id)
     {
-        $sql = "DELETE FROM commentaire_Ticket WHERE id = :id";
+        $sql = "DELETE FROM note_Ticket WHERE id = :id";
         $stmt = $this->db->prepare($sql);
 
         $stmt->execute([':id' => $id]);
@@ -51,7 +51,7 @@ class CommentaireModel {
 
     public function getAll(): array
     {
-        $query = "SELECT * FROM commentaireTicket ";
+        $query = "SELECT * FROM note_Ticket ";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();
@@ -68,25 +68,15 @@ class CommentaireModel {
      * @param int $id ID du ticket
      * @return array|null Données du ticket ou null si non trouvé
      */
+
     public function getById(int $id): ?array
     {
-        $query = "SELECT * FROM commentaire_Ticket WHERE id = :id";
+        $query = "SELECT * FROM note_Ticket WHERE id = :id";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         $result = $stmt->fetch();
         return $result ?: null;
-    }
-    public function tableExistsAndNotEmpty() {
-           // 1. Vérifier si la table existe
-            $checkTable = $this->db->query("SHOW TABLES LIKE 'commentaire_Ticket'");
-            if ($checkTable->rowCount() === 0) {
-                return false;
-            }
-            
-            // 2. Vérifier si la table contient des données
-            $count = $this->db->query("SELECT COUNT(*) FROM commentaire_Ticket")->fetchColumn();
-            return $count > 0;
     }
 
 

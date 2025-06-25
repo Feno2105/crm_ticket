@@ -15,18 +15,16 @@ class AssignementModel
     /**
      * Crée une nouvelle assignation
      */
-    public function create(int $ticketId, int $agentId): int {
-        if ($this->isTicketAlreadyAssigned($ticketId)) {
-            throw new \Exception("Ce ticket est déjà assigné à un agent");
-        }
+    public function create(string $ticketId, string $agentId): int {
+    
 
-        $query = "INSERT INTO assignement (ticket_id, agent_id) VALUES (?, ?)";
+        $query = "INSERT INTO assignement (ticket_id, agent_id) VALUES (:t_id, :a_id)";
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':t_id', $ticketId);
-        $stmt->bindParam(':a_id', $agentId);
+        $stmt->bindValue(':t_id', $ticketId,PDO::PARAM_INT);
+        $stmt->bindValue(':a_id', $agentId,PDO::PARAM_INT);
         $stmt->execute();
 
-        return $stmt->insert_id;
+        return $this->db->lastInsertId();
     }
 
     /**
@@ -38,9 +36,7 @@ class AssignementModel
         $stmt->bindParam(':t_id', $ticketId);
         $stmt->execute();
         
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        
+        $row = $stmt->fetch();
         return $row['count'] > 0;
     }
 

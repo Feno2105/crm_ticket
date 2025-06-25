@@ -12,6 +12,8 @@ use app\controllers\EmployerController;
 use app\controllers\NatureFormController;
 use app\controllers\TypeFormController;
 use app\controllers\ticket\TicketController;
+use app\controllers\ticket\NoteController;
+use app\controllers\ticket\CommentaireController;
 use flight\net\Router;
 use flight\Engine;
 
@@ -72,6 +74,20 @@ $router->group('/ticket', function () use ($router) {
     $router->post('/assigner', [$ticket_controller, 'createAssignement']);
 });
 
+//==================commentaire=================
+$router->group('/commentaire', function () use ($router) {
+    $commentaire_controller = new CommentaireController();
+    $note_controller = new NoteController();
+    $client_controller = new ClientController();
+    $produit_controller = new ProductController();
+    $router->get('/', [$client_controller, 'liste']);
+    $router->post('/', [$client_controller, 'liste']);
+    $router->get('/avis', [$produit_controller, 'liste_ticket']);
+    $router->post('/avis', [$produit_controller, 'liste_ticket']);
+    $router->get('/evaluation', [$commentaire_controller, 'entry']);
+    $router->post('/evaluation', [$commentaire_controller, 'entry']);
+});
+
 $router->group('/dashboard', function () use ($router) {
     $product_controller = new ProductController();
     $router->get('/', [$product_controller, 'getDahsboard']);
@@ -82,7 +98,7 @@ $router->group('/dashboard', function () use ($router) {
 $router->group('/vente', function () use ($router) {
     $vente_product = new VenteController();
     $router->get('/', [$vente_product, 'index']);
-    $router->post('/add', [$vente_product, 'add']);
+    $router->post('/index', [$vente_product, 'add']);
 });
 
 $router->group('/CRM', function () use ($router) {

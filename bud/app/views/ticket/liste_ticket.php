@@ -329,7 +329,7 @@
                                     <select class="form-select" id="priorite" name="priorite" required>
                                         <?php foreach ($liste_statuts as $statuts): ?>
                                             <option value="<?= $statuts['id'] ?>">
-                                                <?= htmlspecialchars($statuts['nom']) ?>
+                                                <?= htmlspecialchars($statuts['desc']) ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
