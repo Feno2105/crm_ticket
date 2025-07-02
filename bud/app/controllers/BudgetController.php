@@ -80,38 +80,37 @@ class BudgetController
         'propos'  => (string)$_POST['propos']
     ];
     
-    $realisationModel = new BudgetModel();
-    $value = $realisationModel->getByPrev((int)$data['id_prevision']);
-    if (!empty($value)) {
-        
-    if ($value[0]['valeur'] < $data['valeur']) {
-         $_SESSION['flash_error'] = "La valeur de la réalisation ne peut pas dépasser la valeur de la prévision.";
-         Flight::redirect('/inserer');
-         return;
-     }
-     
-     $success = $realisationModel->create($data);
-     if ($success) {
-         $_SESSION['flash_success'] = "Réalisation enregistrée avec succès.";
-         $montant = $value[0]['valeur'] - $data['valeur'];
-         $data2 = [
-             'id_dept' => (string)$_POST['id_dept'] ,
-             'valeur'  => (string) $montant ,
-             'prevision_id' => (string)$_POST['prevision_id'],
-             'mois'    => (string)$_POST['mois'] ,
-             'annee'   => (string)$_POST['annee'] ,
-             'realisation'  => (string)$success 
-         ];
-         // Ensure $data2 values are not null before calling saveEcar
-         $realisationModel->saveEcart($data2);
-         }
-         Flight::redirect('/inserer');
-    
-    } else {
-        $_SESSION['flash_error'] = "Aucune prévision trouvée pour l'ID donné.";
-        Flight::redirect('/inserer');
-         return;
+    $value_prevision = (new BudgetModel())->getByPrev($data['id_prevision']);
+    if (empty($value_prevision)) {
+        Flight::redirect('/');
+        return;
     }
+    $budgetModel = new BudgetModel();
+    $existingEcart = $budgetModel->getEcartByIdPrevision($data['id_prevision']);
+    $montant = !empty($existingEcart) ? (string)$existingEcart['valeur']  : (string)$value_prevision[0]['valeur'] ;
+
+    if ((int)$montant < (int)$data['valeur']) {
+      Flight::redirect('/');
+        return;
+    }
+    $success = $budgetModel->createRealisation($data);
+    if ($success) {
+        $_SESSION['flash_success'] = "Réalisation enregistrée avec succès.";
+            $data2 = [
+                'id_dept' => (string)$_POST['id_dept'],
+                'valeur'  => (string)($montant - $data['valeur']),
+                'prevision_id' => (string)$_POST['prevision_id'],
+                'mois'    => (string)$_POST['mois'],
+                'annee'   => (string)$_POST['annee'],
+                'realisation'  => (string)$success
+            ];
+            $budgetModel->saveEcart($data2);
+    }
+    else{
+    Flight::redirect('/');
+    return;
+    }
+    Flight::redirect('/inserer');
 }
 }
 

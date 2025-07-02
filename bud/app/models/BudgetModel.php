@@ -133,7 +133,7 @@ class BudgetModel
     /**
      * Crée une nouvelle réalisation
      */
-    public function create(array $data): int
+    public function createRealisation(array $data): int
     {
         $query = "INSERT INTO realisation 
                  (id_dept, valeur, id_prevision, mois, annee, propos) 
@@ -291,18 +291,27 @@ class BudgetModel
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    public function getEcartById(int $id): array
+    /**
+     * Récupère un écart par son ID
+     * 
+     * @param int $id L'ID de l'écart
+     * @return array|null L'écart correspondant ou null si non trouvé
+     */
+    public function getEcartById(int $id): ?array
     {
         $query = "SELECT 
-    e.id AS id_ecart,
-    e.valeur AS valeur_ecart,
-    FROM 
-    ecart e WHERE e.id = :id";
+                    e.id AS id_ecart,
+                    e.valeur AS valeur_ecart
+                  FROM 
+                    ecart e 
+                  WHERE 
+                    e.id = :id";
+        
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null; // Retourne null si aucun résultat n'est trouvé
     }
 
     /**
@@ -311,13 +320,21 @@ class BudgetModel
      * @param int $idDept L'ID du département
      * @return array Liste des écarts pour ce département
      */
-    public function getByIdDept(int $idDept): array
+    public function getEcartByIdDept(int $idDept): array
     {
         $query = "SELECT * FROM ecart WHERE id_dept = :id_dept";
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':id_dept', $idDept, PDO::PARAM_INT);
         $stmt->execute();
-
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function getEcartByIdPrevision($id_prev): ?array
+    {
+        $query = "SELECT * FROM ecart WHERE id_prevision = :idp ORDER BY id DESC LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':idp', $id_prev,PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 }
