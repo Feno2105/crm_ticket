@@ -26,14 +26,16 @@ class BudgetController
         if($_SESSION['idD'] == 1){
             $liste_previsions = $budgetModel->getAllPrev();
             $liste_realisations = $budgetModel->getAll();
+            $ecarts = $budgetModel->getAllEcart();
         }
         else {
             $liste_previsions = $budgetModel->getByDeptPrev($_SESSION['idD']);
             $liste_realisations = $budgetModel->getRealByDept($_SESSION['idD']);
         }
+        
         $liste_types = $TypeModel->findAll();
         $data = ['page' => "insertBudget",'liste_previsions' => $liste_previsions ,'liste_realisations' => $liste_realisations ,'liste_types'=>$liste_types
-         ,'natures' => $natures];
+         ,'natures' => $natures, 'ecarts' => $ecarts];
         Flight::render('template2', $data);
     }
 

@@ -113,6 +113,40 @@
                                                         <?php endforeach; ?>
                                                     </tbody>
                                                 </table>
+                                                <h5 class="card-title">Écarts budgétaires</h5>
+                                                <table class="table datatable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Prévision</th>
+                                                            <th>Réalisation</th>
+                                                            <th>Écart (Montant)</th>
+                                                            <th>Département</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php
+                                
+                                                        foreach ($ecarts as $ecart): ?>
+                                                            <tr>
+                                                                <td><?= htmlspecialchars($ecart['propos_prevision']) ?></td>
+                                                                <td><?= htmlspecialchars($ecart['propos_realisation']) ?></td>
+                                                                <td class="<?= ($ecart['valeur_ecart'] < 0) ? 'text-danger' : 'text-success' ?>">
+                                                                    <?= number_format($ecart['valeur_ecart'], 2, ',', ' ') ?> Ar
+                                                                </td>
+                                                                <td><?= htmlspecialchars($ecart['nom_departement']) ?></td>
+                                                                <td>
+                                                                    <button class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editEcart<?= $ecart['id_ecart'] ?>">
+                                                                        <i class="bi bi-pencil"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteEcart<?= $ecart['id_ecart'] ?>">
+                                                                        <i class="bi bi-trash"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        <?php endforeach; ?>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
@@ -174,7 +208,7 @@
                                     <label for="montant" class="form-label">Montant</label>
                                     <input type="number" step="0.01" class="form-control" id="montant" name="valeur" required>
                                 </div>
-                    
+
                                 <div class="mb-3">
                                     <label for="mois" class="form-label">Mois</label>
                                     <input type="number" class="form-control" id="mois" name="mois" required>
@@ -183,7 +217,7 @@
                                     <label for="annee" class="form-label">Année</label>
                                     <input type="number" class="form-control" id="annee" name="annee" required>
                                 </div>
-                               
+
                                 <button type="submit" class="btn btn-outline-primary">Enregistrer la réalisation</button>
                             </form>
                         </div>
